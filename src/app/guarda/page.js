@@ -16,8 +16,9 @@ import {
 } from "../../lib/scale";
 
 export default function GuardaPage() {
-  const [selectedDate, setSelectedDate] = useState(REFERENCE_DATE);
-  const [visibleMonth, setVisibleMonth] = useState(REFERENCE_DATE.slice(0, 7));
+  const today = useMemo(() => new Date(), []);
+  const [selectedDate, setSelectedDate] = useState(formatYmd(today));
+  const [visibleMonth, setVisibleMonth] = useState(formatYmd(today).slice(0, 7));
   const [showTeam, setShowTeam] = useState(false);
   const referenceDate = useMemo(() => parseYmd(REFERENCE_DATE), []);
 

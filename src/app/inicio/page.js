@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   formatClock,
   formatLongDate,
+  formatYmd,
   getGroupForDate,
   getTeamForDate,
   parseYmd,
@@ -81,6 +82,29 @@ export default function InicioPage() {
     window.print();
   }
 
+  function downloadTeam() {
+    const lines = [
+      `Escala de guarda - Grupo ${team.group}`,
+      `Data: ${formatLongDate(today)}`,
+      `Comandante: ${team.commander ? `${team.commander.code} - ${team.commander.name}` : "Indisponível"}`,
+      "",
+      "Equipe de guarda:",
+      ...team.roster.map((person, index) =>
+        `${index + 1}. ${person.code} - ${person.name}${index === team.commanderIndex ? " (Comandante)" : ""}`
+      )
+    ];
+
+    const blob = new Blob([lines.join("\r\n")], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `equipe-de-guarda-${formatYmd(today)}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <main className="home-page">
       <section className="home-hero">
@@ -148,11 +172,11 @@ export default function InicioPage() {
           </section>
 
           <div className="home-actions">
-            <Link className="primary-button" href="/guarda">
-              Ver escala de guarda
+            <Link className="secondary-button" href="/guarda">
+              Ver calendário guarda
             </Link>
-            <button type="button" className="secondary-button" onClick={printTeam}>
-              Imprimir equipe
+            <button type="button" className="secondary-button" onClick={downloadTeam}>
+              Baixar equipe
             </button>
             <a className="secondary-button" href={DRIVE_URL} target="_blank" rel="noreferrer">
               Abrir Drive CFP

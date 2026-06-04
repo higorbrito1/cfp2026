@@ -2,7 +2,7 @@
   color-scheme: light;
   --bg: #f3efe5;
   --bg-alt: #e4efe8;
-  --surface: rgba(255, 252, 247, 0.9);
+  --surface: rgba(255, 252, 247, 0.92);
   --surface-strong: #ffffff;
   --ink: #10201b;
   --muted: #5f6d67;
@@ -10,7 +10,6 @@
   --brand: #114b3b;
   --brand-strong: #0a352a;
   --accent: #b56a28;
-  --accent-soft: #f4dcc1;
   --success: #1f7a56;
   --shadow: 0 18px 50px rgba(17, 37, 30, 0.14);
 }
@@ -51,13 +50,13 @@ button:disabled {
 .page-shell {
   width: min(1180px, calc(100% - 24px));
   margin: 0 auto;
-  padding: 24px 0 40px;
+  padding: 16px 0 36px;
 }
 
 .hero-card,
 .feature-card {
   border: 1px solid var(--line);
-  border-radius: 28px;
+  border-radius: 24px;
   background: var(--surface);
   box-shadow: var(--shadow);
   backdrop-filter: blur(12px);
@@ -65,9 +64,9 @@ button:disabled {
 
 .hero-card {
   display: grid;
-  gap: 20px;
-  padding: 24px;
-  margin-bottom: 18px;
+  gap: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
 }
 
 .hero-copy h1,
@@ -81,30 +80,66 @@ button:disabled {
 .card-label {
   margin: 0 0 10px;
   color: var(--accent);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.hero-copy h1 {
+  max-width: 13ch;
+  font-size: clamp(2rem, 8vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.lead {
+  max-width: 60ch;
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.status-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.status-card,
+.reference-panel,
+.feature-card {
+  padding: 16px;
+}
+
+.status-card {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.8));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.status-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.hero-copy h1 {
-  max-width: 12ch;
-  font-size: clamp(2.2rem, 5vw, 4.3rem);
-  line-height: 0.95;
-  letter-spacing: -0.03em;
+.status-card strong {
+  display: block;
+  font-size: clamp(1rem, 4vw, 1.4rem);
+  line-height: 1.25;
 }
 
-.lead {
-  max-width: 62ch;
-  margin: 16px 0 0;
+.status-card small {
+  display: block;
+  margin-top: 6px;
   color: var(--muted);
-  font-size: 1.02rem;
-  line-height: 1.6;
-}
-
-.reference-panel,
-.feature-card {
-  padding: 18px;
+  font-size: 0.84rem;
 }
 
 .panel-heading,
@@ -112,11 +147,11 @@ button:disabled {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 14px;
+  gap: 12px;
 }
 
 .panel-heading h2 {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .muted {
@@ -144,7 +179,7 @@ select {
   width: 100%;
   min-height: 46px;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 14px;
   padding: 10px 12px;
   background: var(--surface-strong);
   color: var(--ink);
@@ -155,7 +190,7 @@ select {
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 0 14px;
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.8);
   color: var(--brand);
   font-weight: 800;
 }
@@ -168,13 +203,13 @@ select {
 }
 
 .group-pill {
-  min-width: 44px;
+  min-width: 42px;
   padding: 10px 14px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.8);
   color: var(--muted);
-  font-weight: 800;
+  font-weight: 900;
   text-align: center;
 }
 
@@ -186,19 +221,19 @@ select {
 
 .dashboard-grid {
   display: grid;
-  gap: 18px;
+  gap: 16px;
 }
 
 .spotlight {
   display: grid;
-  gap: 18px;
+  gap: 16px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.82)),
     radial-gradient(circle at top right, rgba(181, 106, 40, 0.08), transparent 32%);
 }
 
 .inline-date {
-  min-width: 180px;
+  min-width: 160px;
 }
 
 .result-pill {
@@ -207,32 +242,37 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 18px;
-  border-radius: 22px;
+  padding: 16px;
+  border-radius: 20px;
   background: linear-gradient(135deg, var(--brand), var(--brand-strong));
   color: #fff;
 }
 
 .result-pill span {
-  font-size: 0.92rem;
-  opacity: 0.88;
+  font-size: 0.9rem;
+  opacity: 0.9;
 }
 
 .result-pill strong {
-  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-size: clamp(1.3rem, 6vw, 1.9rem);
 }
 
 .week-strip {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(128px, 1fr);
   gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scroll-snap-type: x proximity;
 }
 
 .day-chip {
+  scroll-snap-align: start;
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: 18px;
   padding: 14px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.84);
   color: var(--ink);
   text-align: left;
 }
@@ -250,8 +290,8 @@ select {
 
 .day-chip span {
   color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 800;
+  font-size: 0.75rem;
+  font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -259,7 +299,7 @@ select {
 .day-chip strong {
   display: block;
   margin: 6px 0;
-  font-size: 1.05rem;
+  font-size: 1.02rem;
 }
 
 .day-chip small {
@@ -278,45 +318,45 @@ select {
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
   margin-top: 14px;
 }
 
 .calendar-head {
   color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 800;
+  font-size: 0.72rem;
+  font-weight: 900;
   letter-spacing: 0.08em;
   text-align: center;
   text-transform: uppercase;
 }
 
 .calendar-day {
-  min-height: 90px;
+  min-height: 72px;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.92);
+  border-radius: 14px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.94);
   color: var(--ink);
   text-align: left;
 }
 
 .calendar-day strong {
   display: block;
-  font-size: 1.02rem;
+  font-size: 1rem;
 }
 
 .calendar-day span {
   display: inline-block;
-  margin-top: 14px;
+  margin-top: 10px;
   color: var(--success);
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   font-weight: 800;
 }
 
 .calendar-day.is-out {
-  opacity: 0.25;
-  background: rgba(255, 255, 255, 0.45);
+  opacity: 0.18;
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .calendar-day.is-selected {
@@ -332,10 +372,10 @@ select {
 .calendar-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 16px;
+  gap: 12px;
+  margin-top: 14px;
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   font-weight: 700;
 }
 
@@ -346,8 +386,8 @@ select {
 }
 
 .legend-swatch {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 999px;
   background: var(--line);
 }
@@ -372,36 +412,36 @@ select {
 
 @media (min-width: 880px) {
   .hero-card {
-    grid-template-columns: 1.2fr 0.8fr;
+    grid-template-columns: 1.1fr 0.65fr;
     align-items: start;
-    padding: 30px;
+    padding: 28px;
   }
 
   .dashboard-grid {
-    grid-template-columns: 0.95fr 1.05fr;
+    grid-template-columns: 0.92fr 1.08fr;
     align-items: start;
-  }
-
-  .week-strip {
-    grid-template-columns: repeat(7, minmax(0, 1fr));
   }
 
   .control-grid {
     grid-template-columns: 1fr 1fr;
   }
+
+  .status-stack {
+    align-content: start;
+  }
 }
 
 @media (max-width: 540px) {
   .page-shell {
-    width: min(100%, calc(100% - 16px));
-    padding-top: 14px;
+    width: min(100%, calc(100% - 14px));
+    padding-top: 12px;
   }
 
   .hero-card,
   .feature-card,
   .reference-panel {
-    padding: 16px;
-    border-radius: 22px;
+    padding: 14px;
+    border-radius: 20px;
   }
 
   .panel-heading,
@@ -409,13 +449,19 @@ select {
     flex-direction: column;
   }
 
-  .calendar-grid {
-    gap: 6px;
+  .month-actions {
+    width: 100%;
   }
 
-  .calendar-day {
-    min-height: 76px;
-    padding: 8px;
-    border-radius: 14px;
+  .ghost-button {
+    flex: 1 1 0;
+  }
+
+  .calendar-grid {
+    gap: 5px;
+  }
+
+  .calendar-head {
+    font-size: 0.68rem;
   }
 }

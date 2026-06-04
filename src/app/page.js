@@ -1,10 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const GROUPS = ["A", "B", "C", "D", "E", "F"];
 const EXAMPLE_DATE = "2026-06-08";
 const EXAMPLE_GROUP = "D";
+const FALLBACK_LOCATION = {
+  label: "Brasilia, DF",
+  latitude: -15.793889,
+  longitude: -47.882778
+};
 
 const today = formatYmd(new Date());
 
@@ -13,6 +18,13 @@ export default function Home() {
   const [referenceGroup, setReferenceGroup] = useState(EXAMPLE_GROUP);
   const [selectedDate, setSelectedDate] = useState(EXAMPLE_DATE);
   const [visibleMonth, setVisibleMonth] = useState(EXAMPLE_DATE.slice(0, 7));
+  const [clock, setClock] = useState(new Date());
+  const [weather, setWeather] = useState({
+    loading: true,
+    temperature: null,
+    locationLabel: FALLBACK_LOCATION.label,
+    error: ""
+  });
 
   const reference = useMemo(() => parseYmd(referenceDate), [referenceDate]);
   const selected = useMemo(() => parseYmd(selectedDate), [selectedDate]);
@@ -20,6 +32,7 @@ export default function Home() {
 
   const selectedGroup = getGroupForDate(selected, reference, referenceGroup);
   const selectedText = formatLongDate(selected);
+  const clockText = formatClock(clock);
 
   const nextSevenDays = useMemo(() => {
     return Array.from({ length: 7 }, (_, index) => {
@@ -42,6 +55,70 @@ export default function Home() {
     month: "long",
     year: "numeric"
   }).format(monthDate);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setClock(new Date()), 1000 * 30);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadWeather(latitude, longitude, label) {
+      try {
+        const url = new URL("https://api.open-meteo.com/v1/forecast");
+        url.searchParams.set("latitude", String(latitude));
+        url.searchParams.set("longitude", String(longitude));
+        url.searchParams.set("current", "temperature_2m");
+        url.searchParams.set("timezone", "auto");
+
+        const response = await fetch(url.toString());
+        if (!response.ok) throw new Error("weather");
+
+        const data = await response.json();
+        if (cancelled) return;
+
+        setWeather({
+          loading: false,
+          temperature: data?.current?.temperature_2m ?? null,
+          locationLabel: label,
+          error: ""
+        });
+      } catch {
+        if (cancelled) return;
+        setWeather({
+          loading: false,
+          temperature: null,
+          locationLabel: label,
+          error: "Nao foi possivel carregar a temperatura agora."
+        });
+      }
+    }
+
+    setWeather((current) => ({ ...current, loading: true, error: "" }));
+
+    if (!navigator.geolocation) {
+      loadWeather(FALLBACK_LOCATION.latitude, FALLBACK_LOCATION.longitude, FALLBACK_LOCATION.label);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        loadWeather(latitude, longitude, "Localizacao do celular");
+      },
+      () => {
+        loadWeather(FALLBACK_LOCATION.latitude, FALLBACK_LOCATION.longitude, FALLBACK_LOCATION.label);
+      },
+      { enableHighAccuracy: false, timeout: 6000, maximumAge: 30 * 60 * 1000 }
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function loadExample() {
     setReferenceDate(EXAMPLE_DATE);
@@ -70,18 +147,37 @@ export default function Home() {
       <section className="hero-card">
         <div className="hero-copy">
           <p className="eyebrow">Escala de guarda do quartel</p>
-          <h1>Rotação automática entre os grupos A, B, C, D, E e F</h1>
+          <h1>Rotacao automatica entre os grupos A, B, C, D, E e F</h1>
           <p className="lead">
-            Basta informar uma data-base e o grupo correspondente. O sistema calcula a escala
-            do dia, da semana e do mês com rotação contínua.
+            Defina uma data-base e o grupo inicial. O sistema calcula a escala diaria, a semana
+            e o mes com rotacao continua.
           </p>
+        </div>
+
+        <div className="status-stack" aria-label="Informacoes do momento">
+          <article className="status-card">
+            <span className="status-label">Agora</span>
+            <strong>{clockText}</strong>
+          </article>
+
+          <article className="status-card">
+            <span className="status-label">Temperatura</span>
+            <strong>
+              {weather.loading
+                ? "Carregando..."
+                : weather.temperature !== null
+                ? `${Math.round(weather.temperature)} C`
+                : "Indisponivel"}
+            </strong>
+            <small>{weather.locationLabel}</small>
+          </article>
         </div>
 
         <div className="reference-panel">
           <div className="panel-heading">
             <div>
               <p className="card-label">Base da escala</p>
-              <h2>Defina a regra de rotação</h2>
+              <h2>Defina a regra de rotacao</h2>
             </div>
             <div className="month-actions">
               <button type="button" className="ghost-button" onClick={loadExample}>
@@ -95,7 +191,7 @@ export default function Home() {
 
           <div className="control-grid">
             <label>
-              Data de referência
+              Data de referencia
               <input
                 type="date"
                 value={referenceDate}
@@ -103,7 +199,7 @@ export default function Home() {
               />
             </label>
             <label>
-              Grupo da referência
+              Grupo da referencia
               <select
                 value={referenceGroup}
                 onChange={(event) => setReferenceGroup(event.target.value)}
@@ -134,10 +230,10 @@ export default function Home() {
         <article className="feature-card spotlight">
           <div className="spotlight-header">
             <div>
-              <p className="card-label">Opção 1</p>
+              <p className="card-label">Opcao 1</p>
               <h2>Escala simples</h2>
               <p className="muted">
-                Escolha uma data e veja imediatamente qual grupo fica responsável.
+                Escolha uma data e veja imediatamente qual grupo fica responsavel.
               </p>
             </div>
             <label className="inline-date">
@@ -155,7 +251,7 @@ export default function Home() {
             <strong>Grupo {selectedGroup}</strong>
           </div>
 
-          <div className="week-strip" aria-label="Próximos 7 dias">
+          <div className="week-strip" aria-label="Proximos 7 dias">
             {nextSevenDays.map((item) => {
               const label = formatShortDate(item.date);
               const weekday = formatWeekday(item.date);
@@ -179,22 +275,22 @@ export default function Home() {
         <article className="feature-card">
           <div className="panel-heading">
             <div>
-              <p className="card-label">Opção 2</p>
-              <h2>Calendário mensal</h2>
+              <p className="card-label">Opcao 2</p>
+              <h2>Calendario mensal</h2>
             </div>
             <div className="month-actions">
               <button type="button" className="ghost-button" onClick={() => changeMonth(-1)}>
                 Anterior
               </button>
               <button type="button" className="ghost-button" onClick={() => changeMonth(1)}>
-                Próximo
+                Proximo
               </button>
             </div>
           </div>
 
           <p className="month-title">{monthTitle}</p>
 
-          <div className="calendar-grid" role="grid" aria-label={`Calendário de ${monthTitle}`}>
+          <div className="calendar-grid" role="grid" aria-label={`Calendario de ${monthTitle}`}>
             {["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"].map((label, index) => (
               <span key={`${label}-${index}`} className="calendar-head">
                 {label}
@@ -343,4 +439,11 @@ function formatWeekday(date) {
     .format(date)
     .replace(".", "")
     .toUpperCase();
+}
+
+function formatClock(date) {
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "full",
+    timeStyle: "short"
+  }).format(date);
 }

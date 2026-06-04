@@ -16,17 +16,18 @@ import {
 export default function EscalaPage() {
   const [selectedDate, setSelectedDate] = useState(REFERENCE_DATE);
   const [visibleMonth, setVisibleMonth] = useState(REFERENCE_DATE.slice(0, 7));
+  const referenceDate = useMemo(() => parseYmd(REFERENCE_DATE), []);
 
   const selected = useMemo(() => parseYmd(selectedDate), [selectedDate]);
   const monthDate = useMemo(() => parseMonth(visibleMonth), [visibleMonth]);
-  const selectedGroup = getGroupForDate(selected, parseYmd(REFERENCE_DATE), REFERENCE_GROUP);
+  const selectedGroup = getGroupForDate(selected, referenceDate, REFERENCE_GROUP);
   const monthTitle = new Intl.DateTimeFormat("pt-BR", {
     month: "long",
     year: "numeric"
   }).format(monthDate);
   const monthCells = useMemo(
-    () => buildMonthCells(monthDate, parseYmd(REFERENCE_DATE), REFERENCE_GROUP, selected),
-    [monthDate, selected]
+    () => buildMonthCells(monthDate, referenceDate, REFERENCE_GROUP, selected),
+    [monthDate, referenceDate, selected]
   );
 
   function changeMonth(delta) {
@@ -91,8 +92,8 @@ export default function EscalaPage() {
                     : "calendar-day"
                 }
                 onClick={() => syncSelectedDate(formatYmd(cell.date))}
-                >
-                  <strong>{cell.dayNumber}</strong>
+              >
+                <strong>{cell.dayNumber}</strong>
                 <span>Grupo {group}</span>
               </button>
             );

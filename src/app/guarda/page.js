@@ -98,7 +98,7 @@ export default function GuardaPage() {
                   key={`${person.code}-${person.name}`}
                   className={index === team.commanderIndex ? "team-item is-commander" : "team-item"}
                 >
-                  <span>{person.code}</span>
+                  <span>{person.code} -</span>
                   <strong>{person.name}</strong>
                   {index === team.commanderIndex && <small>Comandante da guarda</small>}
                 </li>

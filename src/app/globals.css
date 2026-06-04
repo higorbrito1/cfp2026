@@ -407,7 +407,7 @@ button:disabled {
 .panel-heading,
 .calendar-toolbar {
   display: grid;
-  grid-template-columns: minmax(100px, auto) 1fr minmax(100px, auto);
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 10px;
 }
@@ -433,7 +433,7 @@ button:disabled {
 .ghost-button {
   min-height: 40px;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 0;
   padding: 0 12px;
   background: rgba(255, 255, 255, 0.8);
   color: var(--brand);
@@ -443,7 +443,7 @@ button:disabled {
 .primary-action {
   min-height: 46px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 0;
   padding: 0 14px;
   background: var(--brand);
   color: #fff;

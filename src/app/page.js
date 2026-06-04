@@ -1,44 +1,37 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import {
+  formatClock,
+  formatLongDate,
+  getGroupForDate,
+  parseYmd,
+  REFERENCE_DATE,
+  REFERENCE_GROUP
+} from "../lib/scale";
 
-const GROUPS = ["A", "B", "C", "D", "E", "F"];
-const REFERENCE_DATE = "2026-06-08";
-const REFERENCE_GROUP = "D";
 const PARANAVAI = {
   label: "Paranavai, PR",
   latitude: -23.07306,
   longitude: -52.46528
 };
 
+const DRIVE_URL = "https://drive.google.com/drive/folders/1sbsmA7awmdsV2fN7xrAKko_yO4OcyMIE";
+
 export default function Home() {
-  const [selectedDate, setSelectedDate] = useState(REFERENCE_DATE);
-  const [visibleMonth, setVisibleMonth] = useState(REFERENCE_DATE.slice(0, 7));
-  const [clock, setClock] = useState(new Date());
+  const [now, setNow] = useState(new Date());
   const [weather, setWeather] = useState({
     loading: true,
     temperature: null,
     error: ""
   });
 
-  const selected = useMemo(() => parseYmd(selectedDate), [selectedDate]);
-  const monthDate = useMemo(() => parseMonth(visibleMonth), [visibleMonth]);
-  const clockText = formatClock(clock);
-  const selectedText = formatLongDate(selected);
-  const selectedGroup = getGroupForDate(selected, parseYmd(REFERENCE_DATE), REFERENCE_GROUP);
-
-  const monthCells = useMemo(
-    () => buildMonthCells(monthDate, parseYmd(REFERENCE_DATE), REFERENCE_GROUP, selected),
-    [monthDate, selected]
-  );
-
-  const monthTitle = new Intl.DateTimeFormat("pt-BR", {
-    month: "long",
-    year: "numeric"
-  }).format(monthDate);
+  const today = now;
+  const currentGroup = getGroupForDate(today, parseYmd(REFERENCE_DATE), REFERENCE_GROUP);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setClock(new Date()), 30_000);
+    const timer = window.setInterval(() => setNow(new Date()), 30_000);
     return () => window.clearInterval(timer);
   }, []);
 
@@ -81,203 +74,54 @@ export default function Home() {
     };
   }, []);
 
-  function changeMonth(delta) {
-    const next = new Date(monthDate.getFullYear(), monthDate.getMonth() + delta, 1);
-    setVisibleMonth(formatYmd(next).slice(0, 7));
-  }
-
-  function syncSelectedDate(value) {
-    setSelectedDate(value);
-    setVisibleMonth(value.slice(0, 7));
-  }
-
   return (
-    <main className="page-shell">
-      <section className="hero-card compact-hero">
-        <div className="hero-copy">
-          <p className="eyebrow">Escala de guarda do quartel</p>
+    <main className="home-page">
+      <section className="home-hero">
+        <div className="home-overlay" />
+        <div className="home-bg" aria-hidden="true" />
+
+        <div className="home-content">
+          <p className="eyebrow">CFP</p>
           <h1>Escala de guarda do quartel</h1>
-        </div>
+          <p className="home-subtitle">
+            Acesso rapido para a escala do dia, temperatura e arquivos da turma.
+          </p>
 
-        <div className="status-stack" aria-label="Informacoes do momento">
-          <article className="status-card">
-            <span className="status-label">Agora</span>
-            <strong>{clockText}</strong>
+          <article className="home-status">
+            <div>
+              <span className="status-label">Temperatura em {PARANAVAI.label}</span>
+              <strong>
+                {weather.loading
+                  ? "Carregando..."
+                  : weather.temperature !== null
+                  ? `${Math.round(weather.temperature)} C`
+                  : "Indisponivel"}
+              </strong>
+              <small>{weather.error || "Atualizada em tempo real"}</small>
+            </div>
+
+            <div>
+              <span className="status-label">Equipe de guarda do dia</span>
+              <strong>Grupo {currentGroup}</strong>
+              <small>{formatLongDate(today)}</small>
+            </div>
+
+            <div>
+              <span className="status-label">Agora</span>
+              <strong>{formatClock(now)}</strong>
+            </div>
           </article>
 
-          <article className="status-card">
-            <span className="status-label">Temperatura em Paranavai, PR</span>
-            <strong>
-              {weather.loading
-                ? "Carregando..."
-                : weather.temperature !== null
-                ? `${Math.round(weather.temperature)} C`
-                : "Indisponivel"}
-            </strong>
-            <small>{weather.error || PARANAVAI.label}</small>
-          </article>
-        </div>
-      </section>
-
-      <section className="feature-card calendar-card">
-        <div className="panel-heading">
-          <div>
-            <p className="card-label">Calendario</p>
-            <h2>Escala diaria</h2>
+          <div className="home-actions">
+            <Link className="primary-button" href="/escala">
+              Ir para escala de guarda
+            </Link>
+            <a className="secondary-button" href={DRIVE_URL} target="_blank" rel="noreferrer">
+              Abrir Drive CFP
+            </a>
           </div>
-        </div>
-
-        <div className="calendar-toolbar">
-          <button type="button" className="ghost-button" onClick={() => changeMonth(-1)}>
-            Anterior
-          </button>
-          <p className="month-title">{monthTitle}</p>
-          <button type="button" className="ghost-button" onClick={() => changeMonth(1)}>
-            Proximo
-          </button>
-        </div>
-
-        <p className="selected-line">
-          <strong>{selectedText}</strong>
-          <span>Grupo {selectedGroup}</span>
-        </p>
-
-        <div className="calendar-grid" role="grid" aria-label={`Calendario de ${monthTitle}`}>
-          {["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"].map((label, index) => (
-            <span key={`${label}-${index}`} className="calendar-head">
-              {label}
-            </span>
-          ))}
-
-          {monthCells.map((cell, index) => {
-            if (!cell.date) {
-              return <div key={`empty-${index}`} className="calendar-day is-out" aria-hidden="true" />;
-            }
-
-            const isToday = isSameDay(cell.date, new Date());
-
-            return (
-              <button
-                key={formatYmd(cell.date)}
-                type="button"
-                className={
-                  cell.isSelected
-                    ? "calendar-day is-selected"
-                    : isToday
-                    ? "calendar-day is-today"
-                    : "calendar-day"
-                }
-                onClick={() => syncSelectedDate(formatYmd(cell.date))}
-              >
-                <strong>{cell.dayNumber}</strong>
-                <span>Grupo {cell.group}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="calendar-legend">
-          <span>
-            <i className="legend-swatch today" />
-            Dia atual
-          </span>
-          <span>
-            <i className="legend-swatch selected" />
-            Dia selecionado
-          </span>
-          <span>
-            <i className="legend-swatch group" />
-            Grupo do dia
-          </span>
         </div>
       </section>
     </main>
   );
-}
-
-function buildMonthCells(monthDate, referenceDate, referenceGroup, selectedDate) {
-  const year = monthDate.getFullYear();
-  const month = monthDate.getMonth();
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
-  const firstWeekday = (firstDay.getDay() + 6) % 7;
-  const totalCells = Math.ceil((firstWeekday + lastDay.getDate()) / 7) * 7;
-  const cells = [];
-
-  for (let index = 0; index < totalCells; index += 1) {
-    const dayNumber = index - firstWeekday + 1;
-
-    if (dayNumber < 1 || dayNumber > lastDay.getDate()) {
-      cells.push({ date: null });
-      continue;
-    }
-
-    const date = new Date(year, month, dayNumber);
-    cells.push({
-      date,
-      dayNumber,
-      group: getGroupForDate(date, referenceDate, referenceGroup),
-      isSelected: isSameDay(date, selectedDate)
-    });
-  }
-
-  return cells;
-}
-
-function getGroupForDate(date, referenceDate, referenceGroup) {
-  const referenceIndex = GROUPS.indexOf(referenceGroup);
-  const offset = diffDays(referenceDate, date);
-  const index = (referenceIndex + offset) % GROUPS.length;
-  return GROUPS[(index + GROUPS.length) % GROUPS.length];
-}
-
-function parseYmd(value) {
-  const [year, month, day] = value.split("-").map(Number);
-  return new Date(year, month - 1, day);
-}
-
-function parseMonth(value) {
-  const [year, month] = value.split("-").map(Number);
-  return new Date(year, month - 1, 1);
-}
-
-function diffDays(from, to) {
-  const start = startOfDay(from);
-  const end = startOfDay(to);
-  return Math.round((end.getTime() - start.getTime()) / 86400000);
-}
-
-function startOfDay(date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
-
-function isSameDay(a, b) {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
-}
-
-function formatYmd(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function formatLongDate(date) {
-  return new Intl.DateTimeFormat("pt-BR", {
-    weekday: "long",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric"
-  }).format(date);
-}
-
-function formatClock(date) {
-  return new Intl.DateTimeFormat("pt-BR", {
-    dateStyle: "full",
-    timeStyle: "short"
-  }).format(date);
 }

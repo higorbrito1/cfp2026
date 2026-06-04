@@ -19,6 +19,7 @@ const PARANAVAI = {
 };
 
 const DRIVE_URL = "https://drive.google.com/drive/folders/1sbsmA7awmdsV2fN7xrAKko_yO4OcyMIE";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export default function InicioPage() {
   const [now, setNow] = useState(new Date());
@@ -119,7 +120,7 @@ export default function InicioPage() {
           <div className="home-image-panel">
             <img
               className="home-hero-image"
-              src="/imagem_fundo.jpeg"
+              src={`${basePath}/imagem_fundo.jpeg`}
               alt="CFP 8ºBPM 26/27"
             />
           </div>

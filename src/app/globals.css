@@ -225,8 +225,9 @@ button:disabled {
 }
 
 .team-compact-card.is-commander {
-  border-color: rgba(193, 36, 36, 0.25);
-  background: rgba(255, 239, 239, 0.95);
+  border-color: rgba(193, 36, 36, 0.15);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: none;
 }
 
 .team-compact-card.is-commander strong {
@@ -322,9 +323,9 @@ button:disabled {
 
 .panel-heading,
 .calendar-toolbar {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(100px, auto) 1fr minmax(100px, auto);
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
 }
 
@@ -340,7 +341,10 @@ button:disabled {
   font-weight: 700;
   text-transform: capitalize;
   text-align: center;
-  flex: 1;
+}
+
+.calendar-toolbar .ghost-button {
+  justify-self: stretch;
 }
 
 .ghost-button {
@@ -460,9 +464,9 @@ button:disabled {
 
 .team-commander {
   min-width: 160px;
-  padding: 10px 12px;
-  border-radius: 16px;
-  background: rgba(31, 93, 78, 0.08);
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .team-commander span {

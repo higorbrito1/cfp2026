@@ -53,7 +53,7 @@ export default function GuardaPage() {
             <h2>Calendário diário</h2>
           </div>
           <Link className="ghost-button home-link" href="/inicio">
-            Voltar à home
+            Voltar
           </Link>
         </div>
 

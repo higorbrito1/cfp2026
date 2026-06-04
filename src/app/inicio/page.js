@@ -116,6 +116,14 @@ export default function InicioPage() {
             </div>
           </article>
 
+          <div className="home-image-panel">
+            <img
+              className="home-hero-image"
+              src="/imagem_fundo.jpeg"
+              alt="CFP 8ºBPM 26/27"
+            />
+          </div>
+
           <section className="home-team printable-team" aria-label="Equipe de guarda do dia">
             <div className="team-panel-header home-team-top">
               <div>
@@ -130,18 +138,18 @@ export default function InicioPage() {
               </div>
             </div>
 
-            <div className="team-compact-grid">
+            <ul className="team-list home-team-list">
               {team.roster.map((person, index) => (
-                <article
+                <li
                   key={`${person.code}-${person.name}`}
-                  className={index === team.commanderIndex ? "team-compact-card is-commander" : "team-compact-card"}
+                  className={index === team.commanderIndex ? "team-item is-commander" : "team-item"}
                 >
                   <span>{person.code}</span>
                   <strong>{person.name}</strong>
                   {index === team.commanderIndex && <small>Comandante da guarda</small>}
-                </article>
+                </li>
               ))}
-            </div>
+            </ul>
           </section>
 
           <div className="home-actions">

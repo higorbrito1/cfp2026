@@ -148,19 +148,44 @@ button:disabled {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.home-team {
-  display: grid;
-  gap: 12px;
-  margin-top: 14px;
-  padding: 12px;
-  border: 1px solid rgba(17, 37, 30, 0.08);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.92);
+.home-image-panel {
+  margin: 22px 0 14px;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.38);
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.08);
 }
 
-.home-team-top h2 {
-  margin: 0;
-  font-size: 1rem;
+.home-hero-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  aspect-ratio: 16 / 9;
+}
+
+.home-team {
+   display: grid;
+   gap: 12px;
+   margin-top: 14px;
+   padding: 12px;
+   border: 1px solid rgba(17, 37, 30, 0.08);
+   border-radius: 18px;
+   background: rgba(255, 255, 255, 0.92);
+ }
+ 
+ .home-team-top h2 {
+   margin: 0;
+   font-size: 1rem;
+ }
+
+ .home-team-list {
+   display: grid;
+   gap: 10px;
+   margin: 0;
+   padding: 0;
+   list-style: none;
 }
 
 .primary-button,

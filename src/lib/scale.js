@@ -1,5 +1,80 @@
 export const GROUPS = ["A", "B", "C", "D", "E", "F"];
 
+export const GROUP_ROSTERS = {
+  A: [
+    { code: "113", name: "HERNATZKI" },
+    { code: "121", name: "NEVES" },
+    { code: "211", name: "MATEUS" },
+    { code: "216", name: "PRESS" },
+    { code: "122", name: "MASSARENTI" },
+    { code: "120", name: "ASBAHR" },
+    { code: "107", name: "BIANCATO" },
+    { code: "218", name: "CAMPOS" },
+    { code: "115", name: "MARTINS" },
+    { code: "103", name: "RAFAELA" }
+  ],
+  B: [
+    { code: "225", name: "MENDONCA" },
+    { code: "130", name: "SOUZA" },
+    { code: "207", name: "AUGUSTO" },
+    { code: "222", name: "MULLER" },
+    { code: "205", name: "SILVA" },
+    { code: "212", name: "QUEIROZ" },
+    { code: "215", name: "FERMIANO" },
+    { code: "226", name: "VANESSA" },
+    { code: "114", name: "BASILIO" },
+    { code: "228", name: "BREYNNER" }
+  ],
+  C: [
+    { code: "110", name: "DOBBINS" },
+    { code: "118", name: "RANGEL" },
+    { code: "213", name: "EDUARDO IGOR" },
+    { code: "106", name: "BOZELLI" },
+    { code: "102", name: "PALMA" },
+    { code: "111", name: "MARQUES" },
+    { code: "129", name: "ALINE" },
+    { code: "124", name: "LANZA" },
+    { code: "105", name: "FERRONI" },
+    { code: "108", name: "ALENCAR" }
+  ],
+  D: [
+    { code: "220", name: "BELIZARIO" },
+    { code: "217", name: "ARAUJO" },
+    { code: "230", name: "JESSICA S." },
+    { code: "202", name: "DIOGO" },
+    { code: "221", name: "CORREIA" },
+    { code: "126", name: "RAMOS" },
+    { code: "127", name: "NOBRE" },
+    { code: "224", name: "RAYSSA" },
+    { code: "229", name: "ESCORPIONI" },
+    { code: "208", name: "LADEIRA" }
+  ],
+  E: [
+    { code: "125", name: "CASTANHEIRA" },
+    { code: "101", name: "GOMES" },
+    { code: "112", name: "MEURER" },
+    { code: "117", name: "DOS SANTOS" },
+    { code: "104", name: "ARCANJO" },
+    { code: "128", name: "GALLETI" },
+    { code: "119", name: "LOMES" },
+    { code: "116", name: "AMARAL" },
+    { code: "123", name: "SANTANA" },
+    { code: "109", name: "RODRIGUES" }
+  ],
+  F: [
+    { code: "209", name: "ALVES" },
+    { code: "204", name: "CUCATO" },
+    { code: "206", name: "YGOR ALVES" },
+    { code: "210", name: "RONISE" },
+    { code: "214", name: "MENIN" },
+    { code: "203", name: "DORNELES" },
+    { code: "223", name: "PARDINHO" },
+    { code: "219", name: "GRAF" },
+    { code: "201", name: "ALMEIDA" },
+    { code: "227", name: "TRINDADE" }
+  ]
+};
+
 export const REFERENCE_DATE = "2026-06-08";
 export const REFERENCE_GROUP = "D";
 
@@ -8,6 +83,28 @@ export function getGroupForDate(date, referenceDate = parseYmd(REFERENCE_DATE), 
   const offset = diffDays(referenceDate, date);
   const index = (referenceIndex + offset) % GROUPS.length;
   return GROUPS[(index + GROUPS.length) % GROUPS.length];
+}
+
+export function getCommanderForDate(date, referenceDate = parseYmd(REFERENCE_DATE), referenceGroup = REFERENCE_GROUP) {
+  const group = getGroupForDate(date, referenceDate, referenceGroup);
+  const roster = GROUP_ROSTERS[group] || [];
+  const offset = diffDays(referenceDate, date);
+  const startOffset = (GROUPS.indexOf(group) - GROUPS.indexOf(referenceGroup) + GROUPS.length) % GROUPS.length;
+  const guardTurns = Math.floor((offset - startOffset) / GROUPS.length);
+  const commanderIndex = mod(3 + guardTurns, roster.length || 1);
+  return roster[commanderIndex] || null;
+}
+
+export function getTeamForDate(date, referenceDate = parseYmd(REFERENCE_DATE), referenceGroup = REFERENCE_GROUP) {
+  const group = getGroupForDate(date, referenceDate, referenceGroup);
+  const roster = GROUP_ROSTERS[group] || [];
+  const commander = getCommanderForDate(date, referenceDate, referenceGroup);
+  return {
+    group,
+    roster,
+    commander,
+    commanderIndex: commander ? roster.findIndex((person) => person.code === commander.code) : -1
+  };
 }
 
 export function buildMonthCells(monthDate, referenceDate, referenceGroup, selectedDate) {
@@ -102,4 +199,8 @@ export function formatWeekday(date) {
     .format(date)
     .replace(".", "")
     .toUpperCase();
+}
+
+function mod(value, divisor) {
+  return ((value % divisor) + divisor) % divisor;
 }

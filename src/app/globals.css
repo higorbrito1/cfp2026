@@ -286,6 +286,16 @@ button:disabled {
   font-weight: 800;
 }
 
+.primary-action {
+  min-height: 46px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 14px;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 900;
+}
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -358,6 +368,88 @@ button:disabled {
 .selected-line span {
   font-size: 0.92rem;
   opacity: 0.9;
+}
+
+.team-panel {
+  display: grid;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.team-panel-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.team-panel-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.team-commander {
+  min-width: 160px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(31, 93, 78, 0.08);
+}
+
+.team-commander span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.team-commander strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.team-list {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.team-item {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.team-item span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.team-item strong {
+  font-size: 0.95rem;
+}
+
+.team-item small {
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.team-item.is-commander {
+  border-color: rgba(31, 93, 78, 0.28);
+  background: linear-gradient(180deg, rgba(239, 247, 244, 1), rgba(255, 255, 255, 1));
 }
 
 .calendar-legend {
@@ -461,6 +553,15 @@ button:disabled {
     min-height: 66px;
     padding: 7px;
     border-radius: 12px;
+  }
+
+  .team-panel-header {
+    flex-direction: column;
+  }
+
+  .team-commander {
+    min-width: 0;
+    width: 100%;
   }
 
   .home-hero {

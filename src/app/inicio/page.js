@@ -119,9 +119,18 @@ export default function InicioPage() {
           <div className="home-image-panel">
             <img
               className="home-hero-image"
-              src="/imagem_fundo.jpeg"
+              src="/imagem%20fundo.jpeg"
               alt="CFP 8ºBPM 26/27"
             />
+          </div>
+
+          <div className="home-actions">
+            <Link className="secondary-button" href="/guarda">
+              Ver calendário guarda
+            </Link>
+            <a className="secondary-button" href={DRIVE_URL} target="_blank" rel="noreferrer">
+              Abrir Drive CFP
+            </a>
           </div>
 
           <section className="home-team printable-team" aria-label="Equipe de guarda do dia">
@@ -144,22 +153,15 @@ export default function InicioPage() {
                   key={`${person.code}-${person.name}`}
                   className={index === team.commanderIndex ? "team-item is-commander" : "team-item"}
                 >
-                  <span>{person.code}</span>
-                  <strong>{person.name}</strong>
+                  <div>
+                    <span>{person.code}</span>
+                    <strong>{person.name}</strong>
+                  </div>
                   {index === team.commanderIndex && <small>Comandante da guarda</small>}
                 </li>
               ))}
             </ul>
           </section>
-
-          <div className="home-actions">
-            <Link className="secondary-button" href="/guarda">
-              Ver calendário guarda
-            </Link>
-            <a className="secondary-button" href={DRIVE_URL} target="_blank" rel="noreferrer">
-              Abrir Drive CFP
-            </a>
-          </div>
         </div>
       </section>
     </main>

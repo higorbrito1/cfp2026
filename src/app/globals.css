@@ -148,6 +148,19 @@ button:disabled {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.home-actions .secondary-button {
+  border: 0;
+  color: #fff;
+}
+
+.home-actions .secondary-button:first-child {
+  background: var(--brand);
+}
+
+.home-actions .secondary-button:last-child {
+  background: var(--success);
+}
+
 .home-image-panel {
   margin: 22px 0 14px;
   overflow: hidden;
@@ -215,6 +228,46 @@ button:disabled {
   border: 1px solid rgba(31, 93, 78, 0.16);
   background: rgba(255, 255, 255, 0.92);
   color: var(--brand-strong);
+}
+
+.team-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.team-item {
+  display: grid;
+  padding: 10px 0;
+  gap: 4px;
+  border-bottom: 1px solid rgba(17, 37, 30, 0.08);
+  background: transparent;
+}
+
+.team-item:last-child {
+  border-bottom: none;
+}
+
+.team-item span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.team-item strong {
+  font-size: 0.95rem;
+}
+
+.team-item small {
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.team-item.is-commander {
+  border-color: rgba(31, 93, 78, 0.2);
 }
 
 .team-compact-grid {

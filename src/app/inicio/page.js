@@ -119,7 +119,7 @@ export default function InicioPage() {
           <div className="home-image-panel">
             <img
               className="home-hero-image"
-              src="/imagem%20fundo.jpeg"
+              src="/imagem_fundo.jpeg"
               alt="CFP 8ºBPM 26/27"
             />
           </div>

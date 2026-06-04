@@ -3,21 +3,17 @@
 import { useEffect, useMemo, useState } from "react";
 
 const GROUPS = ["A", "B", "C", "D", "E", "F"];
-const EXAMPLE_DATE = "2026-06-08";
-const EXAMPLE_GROUP = "D";
+const REFERENCE_DATE = "2026-06-08";
+const REFERENCE_GROUP = "D";
 const PARANAVAI = {
   label: "Paranavai, PR",
   latitude: -23.07306,
   longitude: -52.46528
 };
 
-const today = formatYmd(new Date());
-
 export default function Home() {
-  const [referenceDate, setReferenceDate] = useState(EXAMPLE_DATE);
-  const [referenceGroup, setReferenceGroup] = useState(EXAMPLE_GROUP);
-  const [selectedDate, setSelectedDate] = useState(EXAMPLE_DATE);
-  const [visibleMonth, setVisibleMonth] = useState(EXAMPLE_DATE.slice(0, 7));
+  const [selectedDate, setSelectedDate] = useState(REFERENCE_DATE);
+  const [visibleMonth, setVisibleMonth] = useState(REFERENCE_DATE.slice(0, 7));
   const [clock, setClock] = useState(new Date());
   const [weather, setWeather] = useState({
     loading: true,
@@ -25,17 +21,15 @@ export default function Home() {
     error: ""
   });
 
-  const reference = useMemo(() => parseYmd(referenceDate), [referenceDate]);
   const selected = useMemo(() => parseYmd(selectedDate), [selectedDate]);
   const monthDate = useMemo(() => parseMonth(visibleMonth), [visibleMonth]);
-
-  const selectedGroup = getGroupForDate(selected, reference, referenceGroup);
-  const selectedText = formatLongDate(selected);
   const clockText = formatClock(clock);
+  const selectedText = formatLongDate(selected);
+  const selectedGroup = getGroupForDate(selected, parseYmd(REFERENCE_DATE), REFERENCE_GROUP);
 
   const monthCells = useMemo(
-    () => buildMonthCells(monthDate, reference, referenceGroup, selected),
-    [monthDate, reference, referenceGroup, selected]
+    () => buildMonthCells(monthDate, parseYmd(REFERENCE_DATE), REFERENCE_GROUP, selected),
+    [monthDate, selected]
   );
 
   const monthTitle = new Intl.DateTimeFormat("pt-BR", {
@@ -87,18 +81,6 @@ export default function Home() {
     };
   }, []);
 
-  function loadExample() {
-    setReferenceDate(EXAMPLE_DATE);
-    setReferenceGroup(EXAMPLE_GROUP);
-    setSelectedDate(EXAMPLE_DATE);
-    setVisibleMonth(EXAMPLE_DATE.slice(0, 7));
-  }
-
-  function goToday() {
-    setSelectedDate(today);
-    setVisibleMonth(today.slice(0, 7));
-  }
-
   function changeMonth(delta) {
     const next = new Date(monthDate.getFullYear(), monthDate.getMonth() + delta, 1);
     setVisibleMonth(formatYmd(next).slice(0, 7));
@@ -132,7 +114,7 @@ export default function Home() {
                 ? `${Math.round(weather.temperature)} C`
                 : "Indisponivel"}
             </strong>
-            <small>{weather.error || "Atualizada em tempo real"}</small>
+            <small>{weather.error || PARANAVAI.label}</small>
           </article>
         </div>
       </section>
@@ -143,58 +125,7 @@ export default function Home() {
             <p className="card-label">Calendario</p>
             <h2>Escala diaria</h2>
           </div>
-          <div className="month-actions">
-            <button type="button" className="ghost-button" onClick={goToday}>
-              Hoje
-            </button>
-            <button type="button" className="ghost-button" onClick={loadExample}>
-              Exemplo
-            </button>
-          </div>
         </div>
-
-        <p className="result-line">
-          <strong>{selectedText}</strong>
-          <span>Grupo {selectedGroup}</span>
-        </p>
-
-        <details className="config-details">
-          <summary>Configuracao adicional</summary>
-          <div className="control-grid">
-            <label>
-              Data de referencia
-              <input
-                type="date"
-                value={referenceDate}
-                onChange={(event) => setReferenceDate(event.target.value)}
-              />
-            </label>
-            <label>
-              Grupo da referencia
-              <select
-                value={referenceGroup}
-                onChange={(event) => setReferenceGroup(event.target.value)}
-              >
-                {GROUPS.map((group) => (
-                  <option key={group} value={group}>
-                    Grupo {group}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="group-track" aria-label="Ordem dos grupos">
-            {GROUPS.map((group) => (
-              <span
-                key={group}
-                className={group === referenceGroup ? "group-pill is-active" : "group-pill"}
-              >
-                {group}
-              </span>
-            ))}
-          </div>
-        </details>
 
         <div className="calendar-toolbar">
           <button type="button" className="ghost-button" onClick={() => changeMonth(-1)}>
@@ -205,6 +136,11 @@ export default function Home() {
             Proximo
           </button>
         </div>
+
+        <p className="selected-line">
+          <strong>{selectedText}</strong>
+          <span>Grupo {selectedGroup}</span>
+        </p>
 
         <div className="calendar-grid" role="grid" aria-label={`Calendario de ${monthTitle}`}>
           {["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"].map((label, index) => (

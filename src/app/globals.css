@@ -19,6 +19,11 @@
   box-sizing: border-box;
 }
 
+/* Remove all rounded corners to make UI squared */
+*, *::before, *::after {
+  border-radius: 0 !important;
+}
+
 html {
   min-height: 100%;
   background:

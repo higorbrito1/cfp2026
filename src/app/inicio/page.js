@@ -155,7 +155,7 @@ export default function InicioPage() {
                   className={index === team.commanderIndex ? "team-item is-commander" : "team-item"}
                 >
                   <div>
-                    <span>{person.code}</span>
+                    <span>{person.code} -</span>
                     <strong>{person.name}</strong>
                   </div>
                   {index === team.commanderIndex && <small>Comandante da guarda</small>}

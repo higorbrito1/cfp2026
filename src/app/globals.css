@@ -145,6 +145,21 @@ button:disabled {
   margin-top: 16px;
 }
 
+.home-team {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid rgba(17, 37, 30, 0.08);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.home-team-top h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
 .primary-button,
 .secondary-button {
   display: inline-flex;
@@ -164,10 +179,51 @@ button:disabled {
   color: #fff;
 }
 
+.home-link {
+  min-height: 40px;
+}
+
 .secondary-button {
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.92);
   color: var(--brand);
+}
+
+.team-compact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.team-compact-card {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.team-compact-card span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.team-compact-card strong {
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+.team-compact-card small {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.team-compact-card.is-commander {
+  border-color: rgba(31, 93, 78, 0.28);
+  background: linear-gradient(180deg, rgba(239, 247, 244, 1), rgba(255, 255, 255, 1));
 }
 
 .page-shell {
@@ -520,6 +576,10 @@ button:disabled {
   .home-actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .team-compact-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 540px) {
@@ -573,5 +633,34 @@ button:disabled {
     width: calc(100% - 12px);
     padding: 14px;
     border-radius: 22px;
+  }
+
+  .team-compact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .printable-team,
+  .printable-team * {
+    visibility: visible;
+  }
+
+  .printable-team {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
   }
 }

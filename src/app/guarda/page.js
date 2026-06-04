@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   buildMonthCells,
   formatLongDate,
@@ -51,6 +52,9 @@ export default function GuardaPage() {
             <p className="card-label">Escala de guarda</p>
             <h2>Calendário diário</h2>
           </div>
+          <Link className="ghost-button home-link" href="/inicio">
+            Voltar à home
+          </Link>
         </div>
 
         <div className="calendar-toolbar">

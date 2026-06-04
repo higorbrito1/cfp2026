@@ -85,10 +85,10 @@ export default function InicioPage() {
         <div className="home-bg" aria-hidden="true" />
 
         <div className="home-content">
-          <p className="eyebrow">CFP</p>
-          <h1>Escala de guarda do quartel</h1>
+          <p className="eyebrow">CFP 8ºBPM 26/27</p>
+          <h1>CFP 8ºBPM 26/27</h1>
           <p className="home-subtitle">
-            Acesso rápido para a escala do dia, temperatura e arquivos da turma.
+            Acesso rápido à escala de guarda, clima e arquivos da turma.
           </p>
 
           <article className="home-status">

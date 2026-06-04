@@ -59,11 +59,11 @@ button:disabled {
 
 .home-hero {
   position: relative;
-  min-height: 100vh;
+  min-height: 92vh;
   overflow: hidden;
   display: grid;
   align-items: end;
-  padding: 18px 0;
+  padding: 14px 0 28px;
 }
 
 .home-bg,
@@ -76,90 +76,91 @@ button:disabled {
   background-image: url("/imagem_fundo.jpeg");
   background-position: center center;
   background-size: cover;
-  filter: blur(9px) brightness(1.14) saturate(0.8);
-  transform: scale(1.06);
+  filter: blur(6px) brightness(1.08) saturate(0.95);
+  transform: scale(1.04);
 }
 
 .home-overlay {
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(248, 246, 241, 0.72) 100%),
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.24), transparent 42%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(248, 246, 241, 0.86) 100%),
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.28), transparent 42%);
 }
 
 .home-content {
   position: relative;
   z-index: 1;
-  width: min(980px, calc(100% - 16px));
+  width: min(980px, calc(100% - 24px));
   margin: 0 auto;
-  padding: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 26px;
-  background: rgba(255, 255, 255, 0.82);
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.9);
   color: var(--ink);
-  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(14px);
 }
 
 .home-content h1 {
   margin: 0;
-  font-size: clamp(2rem, 8vw, 3.4rem);
-  line-height: 0.98;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  line-height: 1.05;
   letter-spacing: -0.04em;
 }
 
 .home-subtitle {
-  max-width: 34ch;
-  margin: 12px 0 0;
+  max-width: 40ch;
+  margin: 10px 0 0;
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 .home-status {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 10px;
-  margin-top: 16px;
+  margin-top: 14px;
 }
 
 .home-status > div {
-  padding: 14px;
+  padding: 12px 12px;
   border: 1px solid rgba(17, 37, 30, 0.08);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
 }
 
 .home-status strong {
   display: block;
   margin-top: 4px;
-  font-size: clamp(1rem, 4.2vw, 1.45rem);
+  font-size: 1.05rem;
 }
 
 .home-status small {
   display: block;
-  margin-top: 6px;
+  margin-top: 4px;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
 .home-actions {
   display: grid;
   gap: 10px;
   margin-top: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .home-team {
   display: grid;
-  gap: 14px;
-  margin-top: 16px;
-  padding: 14px;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px;
   border: 1px solid rgba(17, 37, 30, 0.08);
-  border-radius: 20px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.92);
 }
 
 .home-team-top h2 {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 .primary-button,
@@ -167,11 +168,11 @@ button:disabled {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
+  min-height: 44px;
   width: 100%;
   border-radius: 999px;
-  padding: 0 16px;
-  font-weight: 900;
+  padding: 0 14px;
+  font-weight: 800;
   text-align: center;
 }
 
@@ -182,40 +183,40 @@ button:disabled {
 }
 
 .home-link {
-  min-height: 40px;
+  min-height: 38px;
 }
 
 .secondary-button {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(31, 93, 78, 0.16);
   background: rgba(255, 255, 255, 0.92);
-  color: var(--brand);
+  color: var(--brand-strong);
 }
 
 .team-compact-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
 }
 
 .team-compact-card {
   display: grid;
-  gap: 4px;
-  padding: 10px 14px;
+  gap: 3px;
+  padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.96);
-  min-height: 90px;
+  min-height: 72px;
 }
 
 .team-compact-card span {
   color: var(--muted);
-  font-size: 0.76rem;
-  font-weight: 800;
+  font-size: 0.7rem;
+  font-weight: 700;
 }
 
 .team-compact-card strong {
-  font-size: 0.9rem;
-  line-height: 1.3;
+  font-size: 0.88rem;
+  line-height: 1.25;
 }
 
 .team-compact-card small {

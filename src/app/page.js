@@ -113,8 +113,8 @@ export default function Home() {
           </article>
 
           <div className="home-actions">
-            <Link className="primary-button" href="/escala">
-              Ir para escala de guarda
+            <Link className="primary-button" href="/guarda">
+              Ver escala de guarda
             </Link>
             <a className="secondary-button" href={DRIVE_URL} target="_blank" rel="noreferrer">
               Abrir Drive CFP

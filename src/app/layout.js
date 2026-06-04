@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Escala de Guarda",
-  description: "Site para rotacao automatica da escala de guarda do quartel"
+  title: "CFP | Guarda",
+  description: "Home com temperatura, equipe do dia e acesso rapido para a escala de guarda"
 };
 
 export default function RootLayout({ children }) {

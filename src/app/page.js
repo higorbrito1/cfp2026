@@ -5,10 +5,10 @@ import { useEffect, useMemo, useState } from "react";
 const GROUPS = ["A", "B", "C", "D", "E", "F"];
 const EXAMPLE_DATE = "2026-06-08";
 const EXAMPLE_GROUP = "D";
-const FALLBACK_LOCATION = {
-  label: "Brasilia, DF",
-  latitude: -15.793889,
-  longitude: -47.882778
+const PARANAVAI = {
+  label: "Paranavai, PR",
+  latitude: -23.07306,
+  longitude: -52.46528
 };
 
 const today = formatYmd(new Date());
@@ -22,7 +22,6 @@ export default function Home() {
   const [weather, setWeather] = useState({
     loading: true,
     temperature: null,
-    locationLabel: FALLBACK_LOCATION.label,
     error: ""
   });
 
@@ -33,18 +32,6 @@ export default function Home() {
   const selectedGroup = getGroupForDate(selected, reference, referenceGroup);
   const selectedText = formatLongDate(selected);
   const clockText = formatClock(clock);
-
-  const nextSevenDays = useMemo(() => {
-    return Array.from({ length: 7 }, (_, index) => {
-      const date = addDays(selected, index);
-      return {
-        date,
-        group: getGroupForDate(date, reference, referenceGroup),
-        isToday: isSameDay(date, new Date()),
-        isSelected: isSameDay(date, selected)
-      };
-    });
-  }, [reference, referenceGroup, selected]);
 
   const monthCells = useMemo(
     () => buildMonthCells(monthDate, reference, referenceGroup, selected),
@@ -57,18 +44,18 @@ export default function Home() {
   }).format(monthDate);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setClock(new Date()), 1000 * 30);
+    const timer = window.setInterval(() => setClock(new Date()), 30_000);
     return () => window.clearInterval(timer);
   }, []);
 
   useEffect(() => {
     let cancelled = false;
 
-    async function loadWeather(latitude, longitude, label) {
+    async function loadWeather() {
       try {
         const url = new URL("https://api.open-meteo.com/v1/forecast");
-        url.searchParams.set("latitude", String(latitude));
-        url.searchParams.set("longitude", String(longitude));
+        url.searchParams.set("latitude", String(PARANAVAI.latitude));
+        url.searchParams.set("longitude", String(PARANAVAI.longitude));
         url.searchParams.set("current", "temperature_2m");
         url.searchParams.set("timezone", "auto");
 
@@ -81,7 +68,6 @@ export default function Home() {
         setWeather({
           loading: false,
           temperature: data?.current?.temperature_2m ?? null,
-          locationLabel: label,
           error: ""
         });
       } catch {
@@ -89,31 +75,12 @@ export default function Home() {
         setWeather({
           loading: false,
           temperature: null,
-          locationLabel: label,
-          error: "Nao foi possivel carregar a temperatura agora."
+          error: "Nao foi possivel carregar a temperatura."
         });
       }
     }
 
-    setWeather((current) => ({ ...current, loading: true, error: "" }));
-
-    if (!navigator.geolocation) {
-      loadWeather(FALLBACK_LOCATION.latitude, FALLBACK_LOCATION.longitude, FALLBACK_LOCATION.label);
-      return () => {
-        cancelled = true;
-      };
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        loadWeather(latitude, longitude, "Localizacao do celular");
-      },
-      () => {
-        loadWeather(FALLBACK_LOCATION.latitude, FALLBACK_LOCATION.longitude, FALLBACK_LOCATION.label);
-      },
-      { enableHighAccuracy: false, timeout: 6000, maximumAge: 30 * 60 * 1000 }
-    );
+    loadWeather();
 
     return () => {
       cancelled = true;
@@ -144,14 +111,10 @@ export default function Home() {
 
   return (
     <main className="page-shell">
-      <section className="hero-card">
+      <section className="hero-card compact-hero">
         <div className="hero-copy">
           <p className="eyebrow">Escala de guarda do quartel</p>
-          <h1>Rotacao automatica entre os grupos A, B, C, D, E e F</h1>
-          <p className="lead">
-            Defina uma data-base e o grupo inicial. O sistema calcula a escala diaria, a semana
-            e o mes com rotacao continua.
-          </p>
+          <h1>Escala de guarda do quartel</h1>
         </div>
 
         <div className="status-stack" aria-label="Informacoes do momento">
@@ -161,7 +124,7 @@ export default function Home() {
           </article>
 
           <article className="status-card">
-            <span className="status-label">Temperatura</span>
+            <span className="status-label">Temperatura em Paranavai, PR</span>
             <strong>
               {weather.loading
                 ? "Carregando..."
@@ -169,26 +132,34 @@ export default function Home() {
                 ? `${Math.round(weather.temperature)} C`
                 : "Indisponivel"}
             </strong>
-            <small>{weather.locationLabel}</small>
+            <small>{weather.error || "Atualizada em tempo real"}</small>
           </article>
         </div>
+      </section>
 
-        <div className="reference-panel">
-          <div className="panel-heading">
-            <div>
-              <p className="card-label">Base da escala</p>
-              <h2>Defina a regra de rotacao</h2>
-            </div>
-            <div className="month-actions">
-              <button type="button" className="ghost-button" onClick={loadExample}>
-                Usar exemplo
-              </button>
-              <button type="button" className="ghost-button" onClick={goToday}>
-                Ir para hoje
-              </button>
-            </div>
+      <section className="feature-card calendar-card">
+        <div className="panel-heading">
+          <div>
+            <p className="card-label">Calendario</p>
+            <h2>Escala diaria</h2>
           </div>
+          <div className="month-actions">
+            <button type="button" className="ghost-button" onClick={goToday}>
+              Hoje
+            </button>
+            <button type="button" className="ghost-button" onClick={loadExample}>
+              Exemplo
+            </button>
+          </div>
+        </div>
 
+        <p className="result-line">
+          <strong>{selectedText}</strong>
+          <span>Grupo {selectedGroup}</span>
+        </p>
+
+        <details className="config-details">
+          <summary>Configuracao adicional</summary>
           <div className="control-grid">
             <label>
               Data de referencia
@@ -223,122 +194,66 @@ export default function Home() {
               </span>
             ))}
           </div>
-        </div>
-      </section>
+        </details>
 
-      <section className="dashboard-grid">
-        <article className="feature-card spotlight">
-          <div className="spotlight-header">
-            <div>
-              <p className="card-label">Opcao 1</p>
-              <h2>Escala simples</h2>
-              <p className="muted">
-                Escolha uma data e veja imediatamente qual grupo fica responsavel.
-              </p>
-            </div>
-            <label className="inline-date">
-              <span>Dia selecionado</span>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(event) => syncSelectedDate(event.target.value)}
-              />
-            </label>
-          </div>
-
-          <div className="result-pill">
-            <span>{selectedText}</span>
-            <strong>Grupo {selectedGroup}</strong>
-          </div>
-
-          <div className="week-strip" aria-label="Proximos 7 dias">
-            {nextSevenDays.map((item) => {
-              const label = formatShortDate(item.date);
-              const weekday = formatWeekday(item.date);
-
-              return (
-                <button
-                  key={formatYmd(item.date)}
-                  type="button"
-                  className={item.isSelected ? "day-chip is-selected" : "day-chip"}
-                  onClick={() => syncSelectedDate(formatYmd(item.date))}
-                >
-                  <span>{weekday}</span>
-                  <strong>{label}</strong>
-                  <small>{item.isToday ? "Hoje" : `Grupo ${item.group}`}</small>
-                </button>
-              );
-            })}
-          </div>
-        </article>
-
-        <article className="feature-card">
-          <div className="panel-heading">
-            <div>
-              <p className="card-label">Opcao 2</p>
-              <h2>Calendario mensal</h2>
-            </div>
-            <div className="month-actions">
-              <button type="button" className="ghost-button" onClick={() => changeMonth(-1)}>
-                Anterior
-              </button>
-              <button type="button" className="ghost-button" onClick={() => changeMonth(1)}>
-                Proximo
-              </button>
-            </div>
-          </div>
-
+        <div className="calendar-toolbar">
+          <button type="button" className="ghost-button" onClick={() => changeMonth(-1)}>
+            Anterior
+          </button>
           <p className="month-title">{monthTitle}</p>
+          <button type="button" className="ghost-button" onClick={() => changeMonth(1)}>
+            Proximo
+          </button>
+        </div>
 
-          <div className="calendar-grid" role="grid" aria-label={`Calendario de ${monthTitle}`}>
-            {["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"].map((label, index) => (
-              <span key={`${label}-${index}`} className="calendar-head">
-                {label}
-              </span>
-            ))}
-
-            {monthCells.map((cell, index) => {
-              if (!cell.date) {
-                return <div key={`empty-${index}`} className="calendar-day is-out" aria-hidden="true" />;
-              }
-
-              const isToday = isSameDay(cell.date, new Date());
-
-              return (
-                <button
-                  key={formatYmd(cell.date)}
-                  type="button"
-                  className={
-                    cell.isSelected
-                      ? "calendar-day is-selected"
-                      : isToday
-                      ? "calendar-day is-today"
-                      : "calendar-day"
-                  }
-                  onClick={() => syncSelectedDate(formatYmd(cell.date))}
-                >
-                  <strong>{cell.dayNumber}</strong>
-                  <span>Grupo {cell.group}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="calendar-legend">
-            <span>
-              <i className="legend-swatch today" />
-              Dia atual
+        <div className="calendar-grid" role="grid" aria-label={`Calendario de ${monthTitle}`}>
+          {["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"].map((label, index) => (
+            <span key={`${label}-${index}`} className="calendar-head">
+              {label}
             </span>
-            <span>
-              <i className="legend-swatch selected" />
-              Dia selecionado
-            </span>
-            <span>
-              <i className="legend-swatch group" />
-              Grupo do dia
-            </span>
-          </div>
-        </article>
+          ))}
+
+          {monthCells.map((cell, index) => {
+            if (!cell.date) {
+              return <div key={`empty-${index}`} className="calendar-day is-out" aria-hidden="true" />;
+            }
+
+            const isToday = isSameDay(cell.date, new Date());
+
+            return (
+              <button
+                key={formatYmd(cell.date)}
+                type="button"
+                className={
+                  cell.isSelected
+                    ? "calendar-day is-selected"
+                    : isToday
+                    ? "calendar-day is-today"
+                    : "calendar-day"
+                }
+                onClick={() => syncSelectedDate(formatYmd(cell.date))}
+              >
+                <strong>{cell.dayNumber}</strong>
+                <span>Grupo {cell.group}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="calendar-legend">
+          <span>
+            <i className="legend-swatch today" />
+            Dia atual
+          </span>
+          <span>
+            <i className="legend-swatch selected" />
+            Dia selecionado
+          </span>
+          <span>
+            <i className="legend-swatch group" />
+            Grupo do dia
+          </span>
+        </div>
       </section>
     </main>
   );
@@ -390,12 +305,6 @@ function parseMonth(value) {
   return new Date(year, month - 1, 1);
 }
 
-function addDays(date, amount) {
-  const next = new Date(date);
-  next.setDate(next.getDate() + amount);
-  return next;
-}
-
 function diffDays(from, to) {
   const start = startOfDay(from);
   const end = startOfDay(to);
@@ -421,10 +330,6 @@ function formatYmd(date) {
   return `${year}-${month}-${day}`;
 }
 
-function formatShortDate(date) {
-  return new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "2-digit" }).format(date);
-}
-
 function formatLongDate(date) {
   return new Intl.DateTimeFormat("pt-BR", {
     weekday: "long",
@@ -432,13 +337,6 @@ function formatLongDate(date) {
     month: "2-digit",
     year: "numeric"
   }).format(date);
-}
-
-function formatWeekday(date) {
-  return new Intl.DateTimeFormat("pt-BR", { weekday: "short" })
-    .format(date)
-    .replace(".", "")
-    .toUpperCase();
 }
 
 function formatClock(date) {

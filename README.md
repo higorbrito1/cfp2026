@@ -27,6 +27,8 @@ Este projeto já vem configurado para GitHub Pages com export estático.
 3. Ative GitHub Pages usando a opção `GitHub Actions`.
 4. O workflow em [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) faz o deploy automático a cada push.
 
+> Após renomear o repositório para `cfp2026`, o site deverá ficar em `https://higorbrito1.github.io/cfp2026/`.
+
 ## Exemplo
 
 Se a base for `08/06/2026` com o grupo `D`, o sistema calcula:

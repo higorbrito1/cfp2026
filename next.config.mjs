@@ -1,5 +1,5 @@
 const isGithubPages = process.env.GITHUB_PAGES === "true";
-const repoName = process.env.GITHUB_REPOSITORY?.split("/")[1] || "escala-guarda-quartel";
+const repoName = process.env.GITHUB_REPOSITORY?.split("/")[1] || "cfp2026";
 
 const basePath = isGithubPages ? `/${repoName}` : "";
 

@@ -437,10 +437,16 @@ button:disabled {
   gap: 14px;
 }
 
-.panel-heading,
-.calendar-toolbar {
+.panel-heading {
   display: grid;
   grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendar-toolbar {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
 }
@@ -506,6 +512,12 @@ button:disabled {
   background: rgba(255, 255, 255, 0.94);
   color: var(--ink);
   text-align: left;
+  transition: all 0.2s ease;
+}
+
+.calendar-day:hover:not(.is-out) {
+  border-color: var(--brand);
+  background: rgba(255, 255, 255, 1);
 }
 
 .calendar-day strong {
@@ -515,10 +527,12 @@ button:disabled {
 
 .calendar-day span {
   display: inline-block;
-  margin-top: 10px;
-  color: var(--success);
-  font-size: 0.78rem;
+  margin-top: 8px;
+  color: var(--brand-strong);
+  background: rgba(31, 93, 78, 0.08);
+  font-size: 0.72rem;
   font-weight: 800;
+  padding: 2px 6px;
 }
 
 .calendar-day.is-out {
@@ -527,13 +541,20 @@ button:disabled {
 }
 
 .calendar-day.is-selected {
-  border-color: rgba(17, 75, 59, 0.32);
-  background: linear-gradient(180deg, #e7f5ee 0%, #fff 100%);
-  box-shadow: inset 0 0 0 1px rgba(17, 75, 59, 0.1);
+  background: var(--brand) !important;
+  color: #fff !important;
+  border-color: var(--brand-strong) !important;
+  box-shadow: 0 4px 12px rgba(31, 93, 78, 0.24) !important;
+}
+
+.calendar-day.is-selected span {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #fff !important;
 }
 
 .calendar-day.is-today {
-  border-color: rgba(181, 106, 40, 0.45);
+  border: 2px solid var(--accent) !important;
+  box-shadow: inset 0 0 0 1px rgba(181, 106, 40, 0.15), 0 0 8px rgba(181, 106, 40, 0.25);
 }
 
 .selected-line {
@@ -723,15 +744,9 @@ button:disabled {
     border-radius: 18px;
   }
 
-  .panel-heading,
-  .calendar-toolbar {
+  .panel-heading {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .month-title {
-    text-align: left;
-    width: 100%;
   }
 
   .calendar-grid {
@@ -805,4 +820,63 @@ button:disabled {
     border: 0;
     box-shadow: none;
   }
+}
+
+/* Modal styles */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 32, 27, 0.45);
+  backdrop-filter: blur(6px);
+  padding: 16px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  position: relative;
+  width: min(480px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.18);
+  padding: 24px;
+  animation: slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 32, 27, 0.05);
+  border: 0;
+  color: var(--muted);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.modal-close:hover {
+  background: rgba(193, 36, 36, 0.1);
+  color: var(--danger);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }

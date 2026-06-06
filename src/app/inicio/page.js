@@ -39,7 +39,7 @@ export default function InicioPage() {
   // Calendar states
   const [selectedDate, setSelectedDate] = useState(() => formatYmd(today));
   const [visibleMonth, setVisibleMonth] = useState(() => formatYmd(today).slice(0, 7));
-  const [showCalendarTeam, setShowCalendarTeam] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [weather, setWeather] = useState({
     loading: true,
@@ -254,40 +254,6 @@ export default function InicioPage() {
                   <span>Grupo {selectedGroup}</span>
                 </p>
 
-                <button type="button" className="primary-action" style={{ borderRadius: 0, marginBottom: "12px" }} onClick={() => setShowCalendarTeam((value) => !value)}>
-                  {showCalendarTeam ? "Ocultar equipe de guarda" : "Ver equipe de guarda"}
-                </button>
-
-                {showCalendarTeam && (
-                  <section className="team-panel" style={{ marginTop: "0", marginBottom: "16px" }} aria-label="Equipe de guarda do dia selecionado">
-                    <div className="team-panel-header">
-                      <div>
-                        <p className="card-label">Equipe do dia</p>
-                        <h3>Grupo {calendarTeam.group}</h3>
-                      </div>
-                      <div className="team-commander">
-                        <span>Comandante</span>
-                        <strong>
-                          {calendarTeam.commander ? `${calendarTeam.commander.code} - ${calendarTeam.commander.name}` : "Indisponível"}
-                        </strong>
-                      </div>
-                    </div>
-
-                    <ul className="team-list">
-                      {calendarTeam.roster.map((person, index) => (
-                        <li
-                          key={`${person.code}-${person.name}`}
-                          className={index === calendarTeam.commanderIndex ? "team-item is-commander" : "team-item"}
-                        >
-                          <span>{person.code} -</span>
-                          <strong>{person.name}</strong>
-                          {index === calendarTeam.commanderIndex && <small>Comandante da guarda</small>}
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                )}
-
                 <div className="calendar-grid" role="grid" aria-label={`Calendário de ${monthTitle}`}>
                   {["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"].map((label, index) => (
                     <span key={`${label}-${index}`} className="calendar-head">
@@ -314,7 +280,10 @@ export default function InicioPage() {
                             ? "calendar-day is-today"
                             : "calendar-day"
                         }
-                        onClick={() => syncSelectedDate(formatYmd(cell.date))}
+                        onClick={() => {
+                          syncSelectedDate(formatYmd(cell.date));
+                          setIsModalOpen(true);
+                        }}
                       >
                         <strong>{cell.dayNumber}</strong>
                         <span>Grupo {group}</span>
@@ -376,6 +345,44 @@ export default function InicioPage() {
           </div>
         </div>
       </section>
+
+      {isModalOpen && (
+        <div className="modal-backdrop" onClick={() => setIsModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>
+              &times;
+            </button>
+            
+            <div className="team-panel-header" style={{ marginBottom: "16px" }}>
+              <div>
+                <p className="card-label">Equipe de guarda ({formatLongDate(selected)})</p>
+                <h3 style={{ margin: 0, fontSize: "1.2rem" }}>Grupo {calendarTeam.group}</h3>
+              </div>
+              <div className="team-commander" style={{ border: 0, padding: 0 }}>
+                <span>Comandante</span>
+                <strong>
+                  {calendarTeam.commander ? `${calendarTeam.commander.code} - ${calendarTeam.commander.name}` : "Indisponível"}
+                </strong>
+              </div>
+            </div>
+
+            <ul className="team-list">
+              {calendarTeam.roster.map((person, index) => (
+                <li
+                  key={`${person.code}-${person.name}`}
+                  className={index === calendarTeam.commanderIndex ? "team-item is-commander" : "team-item"}
+                >
+                  <div>
+                    <span>{person.code} -</span>
+                    <strong>{person.name}</strong>
+                  </div>
+                  {index === calendarTeam.commanderIndex && <small>Comandante da guarda</small>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

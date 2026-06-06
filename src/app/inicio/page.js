@@ -148,16 +148,15 @@ export default function InicioPage() {
 
           <div className="home-actions">
             <Link className="secondary-button" href="/guarda">
-              Ver calendário guarda
+              Calendário de guarda
             </Link>
+            <button type="button" className="secondary-button" onClick={() => setShowTeam((value) => !value)}>
+              {showTeam ? "Ocultar guarda do dia" : "Guarda do dia"}
+            </button>
             <a className="secondary-button" href={DRIVE_URL} target="_blank" rel="noreferrer">
               Abrir Drive CFP
             </a>
           </div>
-
-          <button type="button" className="primary-action" onClick={() => setShowTeam((value) => !value)}>
-            {showTeam ? "Ocultar equipe de guarda" : "Ver equipe de guarda"}
-          </button>
 
           {showTeam && (
             <section className="home-team printable-team" aria-label="Equipe de guarda do dia">

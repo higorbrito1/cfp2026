@@ -18,8 +18,14 @@ const PARANAVAI = {
   longitude: -52.46528
 };
 
+const COURSE_START_DATE = new Date(2026, 4, 5); // 05/05/2026 (mês é 0-indexed)
 const DRIVE_URL = "https://drive.google.com/drive/folders/1sbsmA7awmdsV2fN7xrAKko_yO4OcyMIE";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+function calculateCourseDays(today) {
+  const diff = today - COURSE_START_DATE;
+  return Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
+}
 
 export default function InicioPage() {
   const [now, setNow] = useState(new Date());
@@ -122,6 +128,12 @@ export default function InicioPage() {
             <div>
               <span className="status-label">Agora</span>
               <strong>{formatClock(now)}</strong>
+            </div>
+
+            <div>
+              <span className="status-label">Dias de curso</span>
+              <strong>{calculateCourseDays(today)}</strong>
+              <small>Desde 05/05/2026</small>
             </div>
           </article>
 

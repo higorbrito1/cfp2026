@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "CFP | Guarda",
+  title: "CFP 8 BPM",
   description: "Home com temperatura, equipe do dia e acesso rapido para a escala de guarda"
 };
 

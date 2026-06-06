@@ -28,7 +28,7 @@ function calculateCourseDays(today) {
 }
 
 export default function InicioPage() {
-  const [now, setNow] = useState(new Date());
+  const [today] = useState(() => new Date());
   const [showTeam, setShowTeam] = useState(false);
   const [weather, setWeather] = useState({
     loading: true,
@@ -37,14 +37,8 @@ export default function InicioPage() {
   });
 
   const referenceDate = useMemo(() => parseYmd(REFERENCE_DATE), []);
-  const today = now;
   const currentGroup = getGroupForDate(today, referenceDate, REFERENCE_GROUP);
   const team = getTeamForDate(today, referenceDate, REFERENCE_GROUP);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 30_000);
-    return () => window.clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -93,11 +87,7 @@ export default function InicioPage() {
         <div className="home-bg" aria-hidden="true" />
 
         <div className="home-content">
-          <p className="eyebrow">CFP 8ºBPM 26/27</p>
           <h1>CFP 8ºBPM 26/27</h1>
-          <p className="home-subtitle">
-            Acesso rápido à escala de guarda, clima e arquivos da turma.
-          </p>
 
           <article className="home-status">
             <div>
@@ -124,11 +114,6 @@ export default function InicioPage() {
               <span className="status-label">Equipe de guarda do dia</span>
               <strong>Grupo {currentGroup}</strong>
               <small>{formatLongDate(today)}</small>
-            </div>
-
-            <div>
-              <span className="status-label">Agora</span>
-              <strong>{formatClock(now)}</strong>
             </div>
 
             <div>

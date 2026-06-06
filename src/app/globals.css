@@ -182,7 +182,8 @@ button:disabled {
   aspect-ratio: 16 / 9;
 }
 
-.home-team-collapse {
+.home-team-collapse,
+.home-calendar-collapse {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-top 0.3s ease;
@@ -191,14 +192,16 @@ button:disabled {
   overflow: hidden;
 }
 
-.home-team-collapse.is-expanded {
+.home-team-collapse.is-expanded,
+.home-calendar-collapse.is-expanded {
   grid-template-rows: 1fr;
   opacity: 1;
   visibility: visible;
   margin-top: 14px;
 }
 
-.home-team-collapse-content {
+.home-team-collapse-content,
+.home-calendar-collapse-content {
   min-height: 0;
 }
 
@@ -211,6 +214,16 @@ button:disabled {
    border-radius: 18px;
    background: rgba(255, 255, 255, 0.92);
  }
+
+.home-calendar {
+   display: grid;
+   gap: 14px;
+   margin-top: 0;
+   padding: 14px;
+   border: 1px solid rgba(17, 37, 30, 0.08);
+   border-radius: 18px;
+   background: rgba(255, 255, 255, 0.92);
+}
  
  .home-team-top h2 {
    margin: 0;
@@ -765,7 +778,8 @@ button:disabled {
     visibility: hidden;
   }
 
-  .home-team-collapse {
+  .home-team-collapse,
+  .home-calendar-collapse {
     display: none;
   }
 

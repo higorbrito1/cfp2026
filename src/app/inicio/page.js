@@ -3,10 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
+  buildMonthCells,
   formatClock,
   formatLongDate,
+  formatYmd,
   getGroupForDate,
   getTeamForDate,
+  isSameDay,
+  parseMonth,
   parseYmd,
   REFERENCE_DATE,
   REFERENCE_GROUP
@@ -30,6 +34,13 @@ function calculateCourseDays(today) {
 export default function InicioPage() {
   const [today] = useState(() => new Date());
   const [showTeam, setShowTeam] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
+
+  // Calendar states
+  const [selectedDate, setSelectedDate] = useState(() => formatYmd(today));
+  const [visibleMonth, setVisibleMonth] = useState(() => formatYmd(today).slice(0, 7));
+  const [showCalendarTeam, setShowCalendarTeam] = useState(false);
+
   const [weather, setWeather] = useState({
     loading: true,
     temperature: null,
@@ -39,6 +50,32 @@ export default function InicioPage() {
   const referenceDate = useMemo(() => parseYmd(REFERENCE_DATE), []);
   const currentGroup = getGroupForDate(today, referenceDate, REFERENCE_GROUP);
   const team = getTeamForDate(today, referenceDate, REFERENCE_GROUP);
+
+  // Calendar calculations
+  const selected = useMemo(() => parseYmd(selectedDate), [selectedDate]);
+  const monthDate = useMemo(() => parseMonth(visibleMonth), [visibleMonth]);
+  const selectedGroup = getGroupForDate(selected, referenceDate, REFERENCE_GROUP);
+  const calendarTeam = getTeamForDate(selected, referenceDate, REFERENCE_GROUP);
+
+  const monthTitle = new Intl.DateTimeFormat("pt-BR", {
+    month: "long",
+    year: "numeric"
+  }).format(monthDate);
+
+  const monthCells = useMemo(
+    () => buildMonthCells(monthDate, referenceDate, REFERENCE_GROUP, selected),
+    [monthDate, referenceDate, selected]
+  );
+
+  function changeMonth(delta) {
+    const next = new Date(monthDate.getFullYear(), monthDate.getMonth() + delta, 1);
+    setVisibleMonth(formatYmd(next).slice(0, 7));
+  }
+
+  function syncSelectedDate(value) {
+    setSelectedDate(value);
+    setVisibleMonth(value.slice(0, 7));
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -132,13 +169,44 @@ export default function InicioPage() {
           </div>
 
           <div className="home-actions">
-            <Link className="secondary-button" href="/guarda">
-              Calendário de guarda
-            </Link>
             <button
               type="button"
               className="secondary-button"
-              onClick={() => setShowTeam((value) => !value)}
+              onClick={() => {
+                setShowCalendar((v) => !v);
+                setShowTeam(false);
+              }}
+              aria-expanded={showCalendar}
+            >
+              <span>{showCalendar ? "Ocultar calendário" : "Calendário de guarda"}</span>
+              <svg
+                className="chevron-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  marginLeft: "8px",
+                  transition: "transform 0.2s ease",
+                  transform: showCalendar ? "rotate(180deg)" : "rotate(0deg)",
+                  display: "inline-block",
+                  verticalAlign: "middle"
+                }}
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => {
+                setShowTeam((value) => !value);
+                setShowCalendar(false);
+              }}
               aria-expanded={showTeam}
             >
               <span>{showTeam ? "Ocultar guarda do dia" : "Guarda do dia"}</span>
@@ -166,6 +234,111 @@ export default function InicioPage() {
             <a className="secondary-button" href={DRIVE_URL} target="_blank" rel="noreferrer">
               Abrir Drive CFP
             </a>
+          </div>
+
+          <div className={`home-calendar-collapse ${showCalendar ? "is-expanded" : ""}`}>
+            <div className="home-calendar-collapse-content">
+              <section className="home-calendar" aria-label="Calendário de escala de guarda">
+                <div className="calendar-toolbar">
+                  <button type="button" className="ghost-button" onClick={() => changeMonth(-1)}>
+                    Anterior
+                  </button>
+                  <p className="month-title">{monthTitle}</p>
+                  <button type="button" className="ghost-button" onClick={() => changeMonth(1)}>
+                    Próximo
+                  </button>
+                </div>
+
+                <p className="selected-line">
+                  <strong>{formatLongDate(selected)}</strong>
+                  <span>Grupo {selectedGroup}</span>
+                </p>
+
+                <button type="button" className="primary-action" style={{ borderRadius: 0, marginBottom: "12px" }} onClick={() => setShowCalendarTeam((value) => !value)}>
+                  {showCalendarTeam ? "Ocultar equipe de guarda" : "Ver equipe de guarda"}
+                </button>
+
+                {showCalendarTeam && (
+                  <section className="team-panel" style={{ marginTop: "0", marginBottom: "16px" }} aria-label="Equipe de guarda do dia selecionado">
+                    <div className="team-panel-header">
+                      <div>
+                        <p className="card-label">Equipe do dia</p>
+                        <h3>Grupo {calendarTeam.group}</h3>
+                      </div>
+                      <div className="team-commander">
+                        <span>Comandante</span>
+                        <strong>
+                          {calendarTeam.commander ? `${calendarTeam.commander.code} - ${calendarTeam.commander.name}` : "Indisponível"}
+                        </strong>
+                      </div>
+                    </div>
+
+                    <ul className="team-list">
+                      {calendarTeam.roster.map((person, index) => (
+                        <li
+                          key={`${person.code}-${person.name}`}
+                          className={index === calendarTeam.commanderIndex ? "team-item is-commander" : "team-item"}
+                        >
+                          <span>{person.code} -</span>
+                          <strong>{person.name}</strong>
+                          {index === calendarTeam.commanderIndex && <small>Comandante da guarda</small>}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+
+                <div className="calendar-grid" role="grid" aria-label={`Calendário de ${monthTitle}`}>
+                  {["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"].map((label, index) => (
+                    <span key={`${label}-${index}`} className="calendar-head">
+                      {label}
+                    </span>
+                  ))}
+
+                  {monthCells.map((cell, index) => {
+                    if (!cell.date) {
+                      return <div key={`empty-${index}`} className="calendar-day is-out" aria-hidden="true" />;
+                    }
+
+                    const isToday = isSameDay(cell.date, new Date());
+                    const group = getGroupForDate(cell.date, referenceDate, REFERENCE_GROUP);
+
+                    return (
+                      <button
+                        key={formatYmd(cell.date)}
+                        type="button"
+                        className={
+                          cell.isSelected
+                            ? "calendar-day is-selected"
+                            : isToday
+                            ? "calendar-day is-today"
+                            : "calendar-day"
+                        }
+                        onClick={() => syncSelectedDate(formatYmd(cell.date))}
+                      >
+                        <strong>{cell.dayNumber}</strong>
+                        <span>Grupo {group}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="calendar-legend">
+                  <span>
+                    <i className="legend-swatch today" />
+                    Dia atual
+                  </span>
+                  <span>
+                    <i className="legend-swatch selected" />
+                    Dia selecionado
+                  </span>
+                  <span>
+                    <i className="legend-swatch group" />
+                    Grupo do dia
+                  </span>
+                </div>
+              </section>
+            </div>
           </div>
 
           <div className={`home-team-collapse ${showTeam ? "is-expanded" : ""}`}>

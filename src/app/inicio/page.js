@@ -102,7 +102,15 @@ export default function InicioPage() {
                   ? `${Math.round(weather.temperature)} C`
                   : "Indisponível"}
               </strong>
-              <small>{weather.error || "Atualizada em tempo real"}</small>
+              <small>
+                {weather.error
+                  ? weather.error
+                  : weather.temperature !== null
+                  ? weather.temperature < 17
+                    ? "🧥 Use blusa"
+                    : "Sem blusa"
+                  : "Atualizada em tempo real"}
+              </small>
             </div>
 
             <div>

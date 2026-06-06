@@ -148,9 +148,15 @@ button:disabled {
 
 .home-actions {
   display: grid;
-  gap: 10px;
-  margin-top: 16px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .home-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .home-actions .secondary-button {
@@ -183,10 +189,30 @@ button:disabled {
   aspect-ratio: 16 / 9;
 }
 
+.home-team-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin-top 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+}
+
+.home-team-collapse.is-expanded {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  margin-top: 14px;
+}
+
+.home-team-collapse-content {
+  min-height: 0;
+}
+
 .home-team {
    display: grid;
    gap: 12px;
-   margin-top: 14px;
+   margin-top: 0;
    padding: 12px;
    border: 1px solid rgba(17, 37, 30, 0.08);
    border-radius: 18px;
@@ -672,9 +698,7 @@ button:disabled {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .home-actions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  /* home-actions grid layout is handled by general classes */
 
   .team-compact-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -746,6 +770,18 @@ button:disabled {
 
   body * {
     visibility: hidden;
+  }
+
+  .home-team-collapse {
+    display: none;
+  }
+
+  .home-team-collapse.is-expanded {
+    display: block !important;
+    grid-template-rows: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    overflow: visible !important;
   }
 
   .printable-team,

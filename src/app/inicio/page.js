@@ -150,45 +150,72 @@ export default function InicioPage() {
             <Link className="secondary-button" href="/guarda">
               Calendário de guarda
             </Link>
-            <button type="button" className="secondary-button" onClick={() => setShowTeam((value) => !value)}>
-              {showTeam ? "Ocultar guarda do dia" : "Guarda do dia"}
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => setShowTeam((value) => !value)}
+              aria-expanded={showTeam}
+            >
+              <span>{showTeam ? "Ocultar guarda do dia" : "Guarda do dia"}</span>
+              <svg
+                className="chevron-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  marginLeft: "8px",
+                  transition: "transform 0.2s ease",
+                  transform: showTeam ? "rotate(180deg)" : "rotate(0deg)",
+                  display: "inline-block",
+                  verticalAlign: "middle"
+                }}
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
             </button>
             <a className="secondary-button" href={DRIVE_URL} target="_blank" rel="noreferrer">
               Abrir Drive CFP
             </a>
           </div>
 
-          {showTeam && (
-            <section className="home-team printable-team" aria-label="Equipe de guarda do dia">
-            <div className="team-panel-header home-team-top">
-              <div>
-                <p className="card-label">Equipe de guarda</p>
-                <h2>Grupo {team.group}</h2>
-              </div>
-              <div className="team-commander">
-                <span>Comandante</span>
-                <strong>
-                  {team.commander ? `${team.commander.code} - ${team.commander.name}` : "Indisponível"}
-                </strong>
-              </div>
-            </div>
-
-            <ul className="team-list home-team-list">
-              {team.roster.map((person, index) => (
-                <li
-                  key={`${person.code}-${person.name}`}
-                  className={index === team.commanderIndex ? "team-item is-commander" : "team-item"}
-                >
+          <div className={`home-team-collapse ${showTeam ? "is-expanded" : ""}`}>
+            <div className="home-team-collapse-content">
+              <section className="home-team printable-team" aria-label="Equipe de guarda do dia">
+                <div className="team-panel-header home-team-top">
                   <div>
-                    <span>{person.code} -</span>
-                    <strong>{person.name}</strong>
+                    <p className="card-label">Equipe de guarda</p>
+                    <h2>Grupo {team.group}</h2>
                   </div>
-                  {index === team.commanderIndex && <small>Comandante da guarda</small>}
-                </li>
-              ))}
-            </ul>
-            </section>
-          )}
+                  <div className="team-commander">
+                    <span>Comandante</span>
+                    <strong>
+                      {team.commander ? `${team.commander.code} - ${team.commander.name}` : "Indisponível"}
+                    </strong>
+                  </div>
+                </div>
+
+                <ul className="team-list home-team-list">
+                  {team.roster.map((person, index) => (
+                    <li
+                      key={`${person.code}-${person.name}`}
+                      className={index === team.commanderIndex ? "team-item is-commander" : "team-item"}
+                    >
+                      <div>
+                        <span>{person.code} -</span>
+                        <strong>{person.name}</strong>
+                      </div>
+                      {index === team.commanderIndex && <small>Comandante da guarda</small>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </div>
+          </div>
         </div>
       </section>
     </main>

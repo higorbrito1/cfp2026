@@ -29,6 +29,7 @@ function calculateCourseDays(today) {
 
 export default function InicioPage() {
   const [now, setNow] = useState(new Date());
+  const [showTeam, setShowTeam] = useState(false);
   const [weather, setWeather] = useState({
     loading: true,
     temperature: null,
@@ -154,7 +155,12 @@ export default function InicioPage() {
             </a>
           </div>
 
-          <section className="home-team printable-team" aria-label="Equipe de guarda do dia">
+          <button type="button" className="primary-action" onClick={() => setShowTeam((value) => !value)}>
+            {showTeam ? "Ocultar equipe de guarda" : "Ver equipe de guarda"}
+          </button>
+
+          {showTeam && (
+            <section className="home-team printable-team" aria-label="Equipe de guarda do dia">
             <div className="team-panel-header home-team-top">
               <div>
                 <p className="card-label">Equipe de guarda</p>
@@ -182,7 +188,8 @@ export default function InicioPage() {
                 </li>
               ))}
             </ul>
-          </section>
+            </section>
+          )}
         </div>
       </section>
     </main>

@@ -141,8 +141,9 @@ button:disabled {
 .home-status small {
   display: block;
   margin-top: 4px;
-  color: var(--muted);
-  font-size: 0.78rem;
+  color: var(--accent);
+  font-size: 0.92rem;
+  font-weight: 800;
 }
 
 .home-actions {

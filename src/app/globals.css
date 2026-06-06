@@ -159,17 +159,16 @@ button:disabled {
   }
 }
 
-.home-actions .secondary-button {
+.home-actions .secondary-button:first-child {
+  background: var(--brand);
   border: 0;
   color: #fff;
 }
 
-.home-actions .secondary-button:first-child {
-  background: var(--brand);
-}
-
 .home-actions .secondary-button:last-child {
   background: var(--success);
+  border: 0;
+  color: #fff;
 }
 
 .home-image-panel {

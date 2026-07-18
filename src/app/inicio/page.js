@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   buildMonthCells,
-  formatClock,
   formatLongDate,
   formatYmd,
   getGroupForDate,
@@ -23,6 +22,8 @@ const PARANAVAI = {
 };
 
 const COURSE_START_DATE = new Date(2026, 4, 5); // 05/05/2026 (mês é 0-indexed)
+const CURRENT_COURSE_WEEK = 9;
+const TOTAL_COURSE_WEEKS = 40;
 const DRIVE_URL = "https://drive.google.com/drive/folders/1sbsmA7awmdsV2fN7xrAKko_yO4OcyMIE";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -31,16 +32,20 @@ function calculateCourseDays(today) {
   return Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
 }
 
+function calculateStageCountdown() {
+  const remainingWeeks = TOTAL_COURSE_WEEKS - CURRENT_COURSE_WEEK;
+  return {
+    calendarDays: remainingWeeks * 7,
+    weekdayDays: remainingWeeks * 5
+  };
+}
+
 export default function InicioPage() {
-  const [today] = useState(() => new Date());
-  const [showTeam, setShowTeam] = useState(false);
+  const [now, setNow] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
-
-  // Calendar states
-  const [selectedDate, setSelectedDate] = useState(() => formatYmd(today));
-  const [visibleMonth, setVisibleMonth] = useState(() => formatYmd(today).slice(0, 7));
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [selectedDate, setSelectedDate] = useState(() => formatYmd(now));
+  const [visibleMonth, setVisibleMonth] = useState(() => formatYmd(now).slice(0, 7));
   const [weather, setWeather] = useState({
     loading: true,
     temperature: null,
@@ -48,10 +53,10 @@ export default function InicioPage() {
   });
 
   const referenceDate = useMemo(() => parseYmd(REFERENCE_DATE), []);
-  const currentGroup = getGroupForDate(today, referenceDate, REFERENCE_GROUP);
-  const team = getTeamForDate(today, referenceDate, REFERENCE_GROUP);
+  const today = now;
+  const stageCountdown = useMemo(() => calculateStageCountdown(), []);
+  const courseDays = useMemo(() => calculateCourseDays(today), [today]);
 
-  // Calendar calculations
   const selected = useMemo(() => parseYmd(selectedDate), [selectedDate]);
   const monthDate = useMemo(() => parseMonth(visibleMonth), [visibleMonth]);
   const selectedGroup = getGroupForDate(selected, referenceDate, REFERENCE_GROUP);
@@ -76,6 +81,11 @@ export default function InicioPage() {
     setSelectedDate(value);
     setVisibleMonth(value.slice(0, 7));
   }
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -116,7 +126,6 @@ export default function InicioPage() {
     };
   }, []);
 
-
   return (
     <main className="home-page">
       <section className="home-hero">
@@ -148,15 +157,27 @@ export default function InicioPage() {
             </div>
 
             <div>
-              <span className="status-label">Equipe de guarda do dia</span>
-              <strong>Grupo {currentGroup}</strong>
-              <small>{formatLongDate(today)}</small>
+              <span className="status-label">Dias de curso</span>
+              <strong>{courseDays}</strong>
+              <small>Desde 05/05/2026</small>
             </div>
 
             <div>
-              <span className="status-label">Dias de curso</span>
-              <strong>{calculateCourseDays(today)}</strong>
-              <small>Desde 05/05/2026</small>
+              <span className="status-label">Dias úteis até estágio</span>
+              <strong>{stageCountdown.weekdayDays}</strong>
+              <small>Apenas dias de segunda a sexta</small>
+            </div>
+
+            <div>
+              <span className="status-label">Dias corridos até estágio</span>
+              <strong>{stageCountdown.calendarDays}</strong>
+              <small>Contagem total até o estágio</small>
+            </div>
+
+            <div>
+              <span className="status-label">Semanas atual / total</span>
+              <strong>{CURRENT_COURSE_WEEK} / {TOTAL_COURSE_WEEKS}</strong>
+              <small>Semana atual e total</small>
             </div>
           </article>
 
@@ -174,7 +195,6 @@ export default function InicioPage() {
               className="secondary-button"
               onClick={() => {
                 setShowCalendar((v) => !v);
-                setShowTeam(false);
               }}
               aria-expanded={showCalendar}
             >
@@ -193,37 +213,6 @@ export default function InicioPage() {
                   marginLeft: "8px",
                   transition: "transform 0.2s ease",
                   transform: showCalendar ? "rotate(180deg)" : "rotate(0deg)",
-                  display: "inline-block",
-                  verticalAlign: "middle"
-                }}
-              >
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={() => {
-                setShowTeam((value) => !value);
-                setShowCalendar(false);
-              }}
-              aria-expanded={showTeam}
-            >
-              <span>{showTeam ? "Ocultar guarda do dia" : "Guarda do dia"}</span>
-              <svg
-                className="chevron-icon"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{
-                  marginLeft: "8px",
-                  transition: "transform 0.2s ease",
-                  transform: showTeam ? "rotate(180deg)" : "rotate(0deg)",
                   display: "inline-block",
                   verticalAlign: "middle"
                 }}
@@ -309,40 +298,6 @@ export default function InicioPage() {
               </section>
             </div>
           </div>
-
-          <div className={`home-team-collapse ${showTeam ? "is-expanded" : ""}`}>
-            <div className="home-team-collapse-content">
-              <section className="home-team printable-team" aria-label="Equipe de guarda do dia">
-                <div className="team-panel-header home-team-top">
-                  <div>
-                    <p className="card-label">Equipe de guarda</p>
-                    <h2>Grupo {team.group}</h2>
-                  </div>
-                  <div className="team-commander">
-                    <span>Comandante</span>
-                    <strong>
-                      {team.commander ? `${team.commander.code} - ${team.commander.name}` : "Indisponível"}
-                    </strong>
-                  </div>
-                </div>
-
-                <ul className="team-list home-team-list">
-                  {team.roster.map((person, index) => (
-                    <li
-                      key={`${person.code}-${person.name}`}
-                      className={index === team.commanderIndex ? "team-item is-commander" : "team-item"}
-                    >
-                      <div>
-                        <span>{person.code} -</span>
-                        <strong>{person.name}</strong>
-                      </div>
-                      {index === team.commanderIndex && <small>Comandante da guarda</small>}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -352,7 +307,7 @@ export default function InicioPage() {
             <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>
               &times;
             </button>
-            
+
             <div className="team-panel-header" style={{ marginBottom: "16px" }}>
               <div>
                 <p className="card-label">Equipe de guarda ({formatLongDate(selected)})</p>
@@ -361,7 +316,9 @@ export default function InicioPage() {
               <div className="team-commander" style={{ border: 0, padding: 0 }}>
                 <span>Comandante</span>
                 <strong>
-                  {calendarTeam.commander ? `${calendarTeam.commander.code} - ${calendarTeam.commander.name}` : "Indisponível"}
+                  {calendarTeam.commander
+                    ? `${calendarTeam.commander.code} - ${calendarTeam.commander.name}`
+                    : "Indisponível"}
                 </strong>
               </div>
             </div>

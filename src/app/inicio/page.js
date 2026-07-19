@@ -22,7 +22,7 @@ const PARANAVAI = {
 };
 
 const COURSE_START_DATE = new Date(2026, 4, 5); // 05/05/2026 (mês é 0-indexed)
-const CURRENT_COURSE_WEEK = 9;
+const CURRENT_COURSE_WEEK = 10;
 const TOTAL_COURSE_WEEKS = 40;
 const DRIVE_URL = "https://drive.google.com/drive/folders/1sbsmA7awmdsV2fN7xrAKko_yO4OcyMIE";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";

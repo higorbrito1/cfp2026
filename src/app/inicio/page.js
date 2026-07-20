@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   buildMonthCells,
+  countRemainingGuardsForGroup,
   formatLongDate,
   formatYmd,
   getGroupForDate,
@@ -70,6 +71,10 @@ export default function InicioPage() {
   const monthCells = useMemo(
     () => buildMonthCells(monthDate, referenceDate, REFERENCE_GROUP, selected),
     [monthDate, referenceDate, selected]
+  );
+  const selectedGroupGuardsRemaining = useMemo(
+    () => countRemainingGuardsForGroup(selected, referenceDate, REFERENCE_GROUP),
+    [referenceDate, selected]
   );
 
   function changeMonth(delta) {
@@ -322,6 +327,10 @@ export default function InicioPage() {
                 </strong>
               </div>
             </div>
+
+            <p className="selected-note">
+              Restam {selectedGroupGuardsRemaining} guardas do grupo {selectedGroup} até o estágio.
+            </p>
 
             <ul className="team-list">
               {calendarTeam.roster.map((person, index) => (

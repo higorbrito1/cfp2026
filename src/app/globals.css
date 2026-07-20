@@ -606,6 +606,13 @@ button:disabled { cursor: default; }
 .selected-line strong { font-size: 0.95rem; font-weight: 700; }
 .selected-line span { font-size: 0.88rem; opacity: 0.88; }
 
+.selected-note {
+  margin: -6px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
 /* ─── Team panel (guarda page) ───────────────────────────────── */
 .team-panel {
   display: grid;

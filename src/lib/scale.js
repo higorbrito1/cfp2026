@@ -1,5 +1,9 @@
 export const GROUPS = ["A", "B", "C", "D", "E", "F"];
 
+export const COURSE_START_DATE = new Date(2026, 4, 5);
+export const TOTAL_COURSE_WEEKS = 40;
+export const STAGE_START_DATE = addDays(COURSE_START_DATE, TOTAL_COURSE_WEEKS * 7);
+
 export const GROUP_ROSTERS = {
   A: [
     { code: "113", name: "HERNATZKI" },
@@ -136,6 +140,31 @@ export function buildMonthCells(monthDate, referenceDate, referenceGroup, select
   return cells;
 }
 
+export function countRemainingGuardsForGroup(
+  date,
+  referenceDate = parseYmd(REFERENCE_DATE),
+  referenceGroup = REFERENCE_GROUP,
+  horizonDate = STAGE_START_DATE
+) {
+  const group = getGroupForDate(date, referenceDate, referenceGroup);
+  const start = startOfDay(date);
+  const end = startOfDay(horizonDate);
+
+  if (start >= end) {
+    return 0;
+  }
+
+  let count = 0;
+
+  for (let cursor = addDays(start, 1); cursor <= end; cursor = addDays(cursor, 1)) {
+    if (getGroupForDate(cursor, referenceDate, referenceGroup) === group) {
+      count += 1;
+    }
+  }
+
+  return count;
+}
+
 export function parseYmd(value) {
   const [year, month, day] = value.split("-").map(Number);
   return new Date(year, month - 1, day);
@@ -199,6 +228,10 @@ export function formatWeekday(date) {
     .format(date)
     .replace(".", "")
     .toUpperCase();
+}
+
+function addDays(date, days) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
 }
 
 function mod(value, divisor) {

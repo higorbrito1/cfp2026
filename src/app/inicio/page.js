@@ -328,9 +328,10 @@ export default function InicioPage() {
               </div>
             </div>
 
-            <p className="selected-note">
-              Restam {selectedGroupGuardsRemaining} guardas do grupo {selectedGroup} até o estágio.
-            </p>
+            <div className="selected-note" aria-live="polite">
+              <strong>{selectedGroupGuardsRemaining}</strong>
+              <span>guardas restantes do grupo {selectedGroup} até o estágio</span>
+            </div>
 
             <ul className="team-list">
               {calendarTeam.roster.map((person, index) => (

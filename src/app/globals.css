@@ -607,10 +607,25 @@ button:disabled { cursor: default; }
 .selected-line span { font-size: 0.88rem; opacity: 0.88; }
 
 .selected-note {
-  margin: -6px 0 0;
-  color: var(--muted);
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(26, 92, 71, 0.14);
+  background: rgba(26, 92, 71, 0.06);
+  color: var(--ink-soft);
+}
+
+.selected-note strong {
+  font-size: 1.55rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--brand-strong);
+}
+
+.selected-note span {
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* ─── Team panel (guarda page) ───────────────────────────────── */

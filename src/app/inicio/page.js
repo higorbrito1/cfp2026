@@ -62,6 +62,10 @@ export default function InicioPage() {
   const monthDate = useMemo(() => parseMonth(visibleMonth), [visibleMonth]);
   const selectedGroup = getGroupForDate(selected, referenceDate, REFERENCE_GROUP);
   const calendarTeam = getTeamForDate(selected, referenceDate, REFERENCE_GROUP);
+  const selectedGroupGuardsRemaining = useMemo(
+    () => countRemainingGuardsForGroup(selected, referenceDate, REFERENCE_GROUP),
+    [referenceDate, selected]
+  );
 
   const monthTitle = new Intl.DateTimeFormat("pt-BR", {
     month: "long",
@@ -71,10 +75,6 @@ export default function InicioPage() {
   const monthCells = useMemo(
     () => buildMonthCells(monthDate, referenceDate, REFERENCE_GROUP, selected),
     [monthDate, referenceDate, selected]
-  );
-  const selectedGroupGuardsRemaining = useMemo(
-    () => countRemainingGuardsForGroup(selected, referenceDate, REFERENCE_GROUP),
-    [referenceDate, selected]
   );
 
   function changeMonth(delta) {

@@ -5,6 +5,10 @@ import Link from "next/link";
 import {
   buildMonthCells,
   countRemainingGuardsForGroup,
+  COURSE_START_DATE,
+  STAGE_START_DATE,
+  TOTAL_COURSE_WEEKS,
+  diffDays,
   formatLongDate,
   formatYmd,
   getGroupForDate,
@@ -22,9 +26,6 @@ const PARANAVAI = {
   longitude: -52.46528
 };
 
-const COURSE_START_DATE = new Date(2026, 4, 5); // 05/05/2026 (mês é 0-indexed)
-const CURRENT_COURSE_WEEK = 10;
-const TOTAL_COURSE_WEEKS = 40;
 const DRIVE_URL = "https://drive.google.com/drive/folders/1sbsmA7awmdsV2fN7xrAKko_yO4OcyMIE";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
@@ -33,11 +34,37 @@ function calculateCourseDays(today) {
   return Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
 }
 
-function calculateStageCountdown() {
-  const remainingWeeks = TOTAL_COURSE_WEEKS - CURRENT_COURSE_WEEK;
+function startOfDay(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function addDays(date, days) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+}
+
+function calculateCurrentCourseWeek(today) {
+  const days = diffDays(COURSE_START_DATE, today);
+  if (days < 0) {
+    return 0;
+  }
+  return Math.min(TOTAL_COURSE_WEEKS, Math.floor(days / 7) + 1);
+}
+
+function calculateStageCountdown(today) {
+  const todayStart = startOfDay(today);
+  const calendarDays = Math.max(0, diffDays(todayStart, STAGE_START_DATE));
+  let weekdayDays = 0;
+
+  for (let cursor = addDays(todayStart, 1); cursor <= STAGE_START_DATE; cursor = addDays(cursor, 1)) {
+    const day = cursor.getDay();
+    if (day !== 0 && day !== 6) {
+      weekdayDays += 1;
+    }
+  }
+
   return {
-    calendarDays: remainingWeeks * 7,
-    weekdayDays: remainingWeeks * 5
+    calendarDays,
+    weekdayDays
   };
 }
 
@@ -55,7 +82,8 @@ export default function InicioPage() {
 
   const referenceDate = useMemo(() => parseYmd(REFERENCE_DATE), []);
   const today = now;
-  const stageCountdown = useMemo(() => calculateStageCountdown(), []);
+  const currentCourseWeek = useMemo(() => calculateCurrentCourseWeek(today), [today]);
+  const stageCountdown = useMemo(() => calculateStageCountdown(today), [today]);
   const courseDays = useMemo(() => calculateCourseDays(today), [today]);
 
   const selected = useMemo(() => parseYmd(selectedDate), [selectedDate]);
@@ -181,7 +209,7 @@ export default function InicioPage() {
 
             <div>
               <span className="status-label">Semanas atual / total</span>
-              <strong>{CURRENT_COURSE_WEEK} / {TOTAL_COURSE_WEEKS}</strong>
+              <strong>{currentCourseWeek} / {TOTAL_COURSE_WEEKS}</strong>
               <small>Semana atual e total</small>
             </div>
           </article>
@@ -314,9 +342,13 @@ export default function InicioPage() {
             </button>
 
             <div className="team-panel-header" style={{ marginBottom: "16px" }}>
-              <div>
+              <div style={{ display: "grid", gap: "8px" }}>
                 <p className="card-label">Equipe de guarda ({formatLongDate(selected)})</p>
                 <h3 style={{ margin: 0, fontSize: "1.2rem" }}>Grupo {calendarTeam.group}</h3>
+                <div className="selected-note" aria-live="polite">
+                  <strong>{selectedGroupGuardsRemaining}</strong>
+                  <span>guardas restantes até o estágio</span>
+                </div>
               </div>
               <div className="team-commander" style={{ border: 0, padding: 0 }}>
                 <span>Comandante</span>
@@ -326,11 +358,6 @@ export default function InicioPage() {
                     : "Indisponível"}
                 </strong>
               </div>
-            </div>
-
-            <div className="selected-note" aria-live="polite">
-              <strong>{selectedGroupGuardsRemaining}</strong>
-              <span>guardas restantes do grupo {selectedGroup} até o estágio</span>
             </div>
 
             <ul className="team-list">

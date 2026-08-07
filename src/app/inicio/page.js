@@ -28,8 +28,10 @@ const PARANAVAI = {
 
 const DRIVE_URL = "https://drive.google.com/drive/folders/1sbsmA7awmdsV2fN7xrAKko_yO4OcyMIE";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const WEEK_ONE_START = new Date(2026, 4, 17); // Semana 1 inicia em 17/05/2026
 
 function calculateCourseDays(today) {
+  // Contagem de dias corridos inicia em 05/05/2026, conforme solicitado.
   const diff = today - COURSE_START_DATE;
   return Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
 }
@@ -42,12 +44,18 @@ function addDays(date, days) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
 }
 
+function startOfWeek(date) {
+  const day = date.getDay();
+  return addDays(startOfDay(date), -day); // Sunday = 0
+}
+
 function calculateCurrentCourseWeek(today) {
-  const days = diffDays(COURSE_START_DATE, today);
-  if (days < 0) {
-    return 0;
+  const weekStart = startOfWeek(today);
+  const weekIndex = Math.floor(diffDays(WEEK_ONE_START, weekStart) / 7) + 1;
+  if (weekIndex < 1) {
+    return 1;
   }
-  return Math.min(TOTAL_COURSE_WEEKS, Math.floor(days / 7) + 1);
+  return Math.min(TOTAL_COURSE_WEEKS, weekIndex);
 }
 
 function calculateStageCountdown(today) {

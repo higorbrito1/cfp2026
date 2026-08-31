@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   buildMonthCells,
+  buildGuardSchedule,
+  formatGuardDuration,
   formatLongDate,
   formatYmd,
   getGroupForDate,
@@ -20,12 +22,27 @@ export default function GuardaPage() {
   const [selectedDate, setSelectedDate] = useState(formatYmd(today));
   const [visibleMonth, setVisibleMonth] = useState(formatYmd(today).slice(0, 7));
   const [showTeam, setShowTeam] = useState(false);
+  const [startTime, setStartTime] = useState("18:00");
+  const [endTime, setEndTime] = useState("06:00");
+  const [initialPosts, setInitialPosts] = useState({});
   const referenceDate = useMemo(() => parseYmd(REFERENCE_DATE), []);
 
   const selected = useMemo(() => parseYmd(selectedDate), [selectedDate]);
   const monthDate = useMemo(() => parseMonth(visibleMonth), [visibleMonth]);
   const selectedGroup = getGroupForDate(selected, referenceDate, REFERENCE_GROUP);
   const team = getTeamForDate(selected, referenceDate, REFERENCE_GROUP);
+  const defaultPosts = useMemo(
+    () => Object.fromEntries(team.roster.map((person, index) => [person.code, index < 3 ? String(index) : "-1"])),
+    [team.roster]
+  );
+  useEffect(() => {
+    setInitialPosts({});
+  }, [team.group]);
+  const assignedPosts = Object.keys(initialPosts).length ? initialPosts : defaultPosts;
+  const guardSchedule = useMemo(
+    () => buildGuardSchedule(startTime, endTime, assignedPosts, team.roster),
+    [startTime, endTime, assignedPosts, team.roster]
+  );
   const monthTitle = new Intl.DateTimeFormat("pt-BR", {
     month: "long",
     year: "numeric"
@@ -106,6 +123,70 @@ export default function GuardaPage() {
             </ul>
           </section>
         )}
+
+        <section className="guard-schedule-panel" aria-labelledby="guard-schedule-title">
+          <div className="panel-heading">
+            <div>
+              <p className="card-label">Rotação dos postos</p>
+              <h2 id="guard-schedule-title">Configurar escala</h2>
+            </div>
+          </div>
+
+          <div className="guard-time-fields">
+            <label>
+              Início da guarda
+              <input type="time" value={startTime} onChange={(event) => setStartTime(event.target.value)} />
+            </label>
+            <label>
+              Fim da guarda
+              <input type="time" value={endTime} onChange={(event) => setEndTime(event.target.value)} />
+            </label>
+          </div>
+
+          <p className="schedule-help">Cada período tem no máximo 2 horas, com um integrante em cada posto. Os demais entram no rodízio para equilibrar as horas.</p>
+
+          <div className="member-post-fields">
+            {team.roster.map((person) => (
+              <label key={person.code}>
+                <span>{person.code} - {person.name}</span>
+                <select
+                  value={assignedPosts[person.code] ?? "-1"}
+                  onChange={(event) => setInitialPosts((current) => ({
+                    ...assignedPosts,
+                    ...current,
+                    [person.code]: event.target.value
+                  }))}
+                >
+                  <option value="-1">Não inicia</option>
+                  <option value="0">Começa no P1</option>
+                  <option value="1">Começa no P2</option>
+                  <option value="2">Começa no P3</option>
+                </select>
+              </label>
+            ))}
+          </div>
+
+          {guardSchedule.error ? (
+            <p className="schedule-error" role="alert">{guardSchedule.error}</p>
+          ) : (
+            <div className="rotation-list">
+              <p className="schedule-summary">
+                {guardSchedule.slots.length} períodos · {formatGuardDuration(guardSchedule.slots[0]?.duration || 0)} por período
+              </p>
+              {guardSchedule.slots.map((slot, index) => (
+                <div className="rotation-row" key={`${slot.start}-${slot.end}`}>
+                  <div className="rotation-time"><strong>{slot.start}–{slot.end}</strong><small>{formatGuardDuration(slot.duration)}</small></div>
+                  {["P1", "P2", "P3"].map((post, postIndex) => (
+                    <div className="rotation-post" key={post}>
+                      <strong>{post}</strong>
+                      <span>{slot.posts[postIndex].map((member) => member.name).join(", ") || "Sem membro"}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
 
         <div className="calendar-grid" role="grid" aria-label={`Calendário de ${monthTitle}`}>
           {["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"].map((label, index) => (

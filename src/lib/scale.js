@@ -230,6 +230,119 @@ export function formatWeekday(date) {
     .toUpperCase();
 }
 
+export function buildGuardSchedule(startTime, endTime, initialPosts, roster = [], autoFill = false) {
+  const startMinutes = parseTime(startTime);
+  let endMinutes = parseTime(endTime);
+
+  if (startMinutes === null || endMinutes === null) {
+    return { error: "Informe horários válidos.", slots: [] };
+  }
+
+  if (endMinutes <= startMinutes) {
+    endMinutes += 24 * 60;
+  }
+
+  const totalMinutes = endMinutes - startMinutes;
+  if (totalMinutes <= 0 || totalMinutes > 24 * 60) {
+    return { error: "O período deve ter entre 1 minuto e 24 horas.", slots: [] };
+  }
+
+  const slotCount = Math.ceil(totalMinutes / 120);
+  const baseDuration = Math.floor(totalMinutes / slotCount);
+  const extraMinutes = totalMinutes % slotCount;
+  const slots = [];
+  const initialMembers = [null, null, null];
+  const initialCodes = new Set();
+
+  Object.entries(initialPosts).forEach(([code, postIndex]) => {
+    const index = Number(postIndex);
+    if (index >= 0 && index < 3 && !initialMembers[index] && !initialCodes.has(code)) {
+      const member = roster.find((person) => person.code === code);
+      if (member) {
+        initialMembers[index] = member;
+        initialCodes.add(code);
+      }
+    }
+  });
+
+  const orderedRoster = [
+    ...initialMembers.filter(Boolean),
+    ...roster.filter((person) => !initialCodes.has(person.code))
+  ];
+
+  if (orderedRoster.length < 3) {
+    return { error: "É necessário ter pelo menos 3 integrantes.", slots: [] };
+  }
+
+  let cursor = startMinutes;
+
+  for (let index = 0; index < slotCount; index += 1) {
+    const duration = baseDuration + (index < extraMinutes ? 1 : 0);
+    const slotStart = cursor;
+    const slotEnd = cursor + duration;
+    const rotatedPosts = !autoFill && initialCodes.size === 0
+      ? [[], [], []]
+      : [0, 1, 2].map((postIndex) => {
+        const memberIndex = (index * 3 + postIndex) % orderedRoster.length;
+        const targetPost = (postIndex + index) % 3;
+        return { targetPost, member: orderedRoster[memberIndex] };
+      }).reduce((posts, { targetPost, member }) => {
+        posts[targetPost].push(member);
+        return posts;
+      }, [[], [], []]);
+
+    slots.push({
+      start: formatTime(slotStart),
+      end: formatTime(slotEnd),
+      duration,
+      posts: rotatedPosts
+    });
+    cursor = slotEnd;
+  }
+
+  return { error: "", slots, totalMinutes };
+}
+
+function parseTime(value) {
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(value)) return null;
+  const [hours, minutes] = value.split(":").map(Number);
+  return hours * 60 + minutes;
+}
+
+function formatTime(totalMinutes) {
+  const normalized = totalMinutes % (24 * 60);
+  const hours = String(Math.floor(normalized / 60)).padStart(2, "0");
+  const minutes = String(normalized % 60).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+export function formatGuardDuration(minutes) {
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  if (!hours) return `${remainingMinutes} min`;
+  if (!remainingMinutes) return `${hours}h`;
+  return `${hours}h${String(remainingMinutes).padStart(2, "0")}`;
+}
+
+export function formatGuardScheduleForWhatsApp(slots, date, group) {
+  const lines = [
+    `*ESCALA DE GUARDA*`,
+    `${formatLongDate(date)} · Grupo ${group}`,
+    ""
+  ];
+
+  slots.forEach((slot, index) => {
+    lines.push(`*HORÁRIO ${index + 1}:* ${slot.start} às ${slot.end} (${formatGuardDuration(slot.duration)})`);
+    ["P1", "P2", "P3"].forEach((post, postIndex) => {
+      const members = slot.posts[postIndex].map((member) => `${member.code} - ${member.name}`).join(", ") || "Sem membro";
+      lines.push(`${post}: ${members}`);
+    });
+    lines.push("");
+  });
+
+  return lines.join("\n").trim();
+}
+
 function addDays(date, days) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
 }

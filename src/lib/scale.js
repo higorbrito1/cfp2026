@@ -247,7 +247,11 @@ export function buildGuardSchedule(startTime, endTime, initialPosts, roster = []
     return { error: "O período deve ter entre 1 minuto e 24 horas.", slots: [] };
   }
 
-  const slotCount = Math.ceil(totalMinutes / 120);
+  if (totalMinutes > 6 * 120) {
+    return { error: "Com 6 horários, a guarda não pode ultrapassar 12 horas.", slots: [] };
+  }
+
+  const slotCount = 6;
   const baseDuration = Math.floor(totalMinutes / slotCount);
   const extraMinutes = totalMinutes % slotCount;
   const slots = [];

@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Meu dinheiro | Controle financeiro",
-  description: "Controle financeiro pessoal simples e offline"
+  title: "CFP 8 BPM",
+  description: "Home com temperatura, equipe do dia e acesso rapido para a escala de guarda"
 };
 
 export default function RootLayout({ children }) {

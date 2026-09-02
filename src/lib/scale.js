@@ -247,6 +247,10 @@ export function buildGuardSchedule(startTime, endTime, initialPosts, roster = []
     return { error: "O período deve ter entre 1 minuto e 24 horas.", slots: [] };
   }
 
+  const slotCount = Math.max(6, Math.ceil(totalMinutes / 120));
+  const baseDuration = Math.floor(totalMinutes / slotCount);
+  const extraMinutes = totalMinutes % slotCount;
+  const slots = [];
   const initialMembers = [null, null, null];
   const initialCodes = new Set();
 
@@ -270,20 +274,10 @@ export function buildGuardSchedule(startTime, endTime, initialPosts, roster = []
     return { error: "É necessário ter pelo menos 3 integrantes.", slots: [] };
   }
 
-  const slotCount = getBalancedSlotCount(totalMinutes, orderedRoster.length);
-  if (!slotCount) {
-    return {
-      error: "A duração escolhida não permite dividir igualmente os postos e o tempo em períodos menores que 2 horas.",
-      slots: []
-    };
-  }
-
-  const duration = totalMinutes / slotCount;
-  const slots = [];
-
   let cursor = startMinutes;
 
   for (let index = 0; index < slotCount; index += 1) {
+    const duration = baseDuration + (index < extraMinutes ? 1 : 0);
     const slotStart = cursor;
     const slotEnd = cursor + duration;
     const rotatedPosts = !autoFill && initialCodes.size === 0
@@ -307,19 +301,6 @@ export function buildGuardSchedule(startTime, endTime, initialPosts, roster = []
   }
 
   return { error: "", slots, totalMinutes };
-}
-
-function getBalancedSlotCount(totalMinutes, rosterSize) {
-  const minimumSlots = Math.max(6, Math.floor(totalMinutes / 120) + 1);
-  if (rosterSize <= 0 || minimumSlots > totalMinutes) return null;
-
-  for (let slotCount = minimumSlots; slotCount <= totalMinutes; slotCount += 1) {
-    const hasEqualAssignments = (slotCount * 3) % rosterSize === 0;
-    const hasEqualDuration = totalMinutes % slotCount === 0;
-    if (hasEqualAssignments && hasEqualDuration) return slotCount;
-  }
-
-  return null;
 }
 
 function parseTime(value) {

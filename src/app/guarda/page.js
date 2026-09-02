@@ -31,17 +31,21 @@ export default function GuardaPage() {
   const monthDate = useMemo(() => parseMonth(visibleMonth), [visibleMonth]);
   const selectedGroup = getGroupForDate(selected, referenceDate, REFERENCE_GROUP);
   const team = getTeamForDate(selected, referenceDate, REFERENCE_GROUP);
+  const guardRoster = useMemo(
+    () => team.roster.filter((person) => person.code !== team.commander?.code),
+    [team.roster, team.commander]
+  );
   const defaultPosts = useMemo(
-    () => Object.fromEntries(team.roster.map((person, index) => [person.code, index < 3 ? String(index) : "-1"])),
-    [team.roster]
+    () => Object.fromEntries(guardRoster.map((person, index) => [person.code, index < 3 ? String(index) : "-1"])),
+    [guardRoster]
   );
   useEffect(() => {
     setInitialPosts({});
-  }, [team.group]);
+  }, [team.group, team.commander?.code]);
   const assignedPosts = Object.keys(initialPosts).length ? initialPosts : defaultPosts;
   const guardSchedule = useMemo(
-    () => buildGuardSchedule(startTime, endTime, assignedPosts, team.roster),
-    [startTime, endTime, assignedPosts, team.roster]
+    () => buildGuardSchedule(startTime, endTime, assignedPosts, guardRoster),
+    [startTime, endTime, assignedPosts, guardRoster]
   );
   const monthTitle = new Intl.DateTimeFormat("pt-BR", {
     month: "long",
@@ -143,10 +147,10 @@ export default function GuardaPage() {
             </label>
           </div>
 
-          <p className="schedule-help">A escala tem no mínimo 6 horários, com cada período de no máximo 2 horas e um integrante em cada posto. Os demais entram no rodízio para equilibrar as horas.</p>
+          <p className="schedule-help">O comandante não participa dos postos. Os {guardRoster.length} integrantes são distribuídos em P1, P2 e P3, com períodos menores que 2 horas e o mesmo tempo para cada um.</p>
 
           <div className="member-post-fields">
-            {team.roster.map((person) => (
+            {guardRoster.map((person) => (
               <label key={person.code}>
                 <span>{person.code} - {person.name}</span>
                 <select

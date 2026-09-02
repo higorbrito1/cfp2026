@@ -143,7 +143,7 @@ export default function GuardaPage() {
             </label>
           </div>
 
-          <p className="schedule-help">A escala tem no mínimo 6 horários, com cada período de no máximo 2 horas. O rodízio distribui a mesma quantidade de postos e de tempo para cada integrante.</p>
+          <p className="schedule-help">A escala tem no mínimo 6 horários, com cada período de no máximo 2 horas e um integrante em cada posto. Os demais entram no rodízio para equilibrar as horas.</p>
 
           <div className="member-post-fields">
             {team.roster.map((person) => (

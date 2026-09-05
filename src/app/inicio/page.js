@@ -399,6 +399,9 @@ export default function InicioPage() {
             <a className="secondary-button" href={DRIVE_URL} target="_blank" rel="noreferrer">
               Abrir Drive CFP
             </a>
+            <Link className="secondary-button" href="/rifa">
+              Rifa CFP 2026/2027
+            </Link>
           </div>
 
           <div className={`home-calendar-collapse ${showCalendar ? "is-expanded" : ""}`}>

@@ -192,6 +192,57 @@ button:disabled { cursor: default; }
   box-shadow: 0 6px 18px var(--brand-glow);
 }
 
+/* ─── Raffle page ───────────────────────────────────────────── */
+.raffle-page {
+  min-height: 100vh;
+  padding: 18px 0 42px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(192, 122, 48, 0.16), transparent 30%),
+    radial-gradient(circle at 88% 10%, rgba(26, 92, 71, 0.13), transparent 34%);
+}
+
+.raffle-shell { width: min(980px, calc(100% - 24px)); margin: 0 auto; }
+.raffle-back { display: inline-block; margin-bottom: 14px; color: var(--brand); font-size: 0.82rem; font-weight: 800; }
+.raffle-hero, .raffle-section, .raffle-payment { border: 1px solid var(--line); box-shadow: var(--shadow-md); }
+.raffle-hero { padding: clamp(24px, 6vw, 58px); background: linear-gradient(135deg, var(--brand-strong), var(--brand)); color: #fff; }
+.raffle-hero h1 { margin: 5px 0 8px; font-size: clamp(2.4rem, 8vw, 5.4rem); line-height: 0.96; letter-spacing: -0.06em; }
+.raffle-hero p { max-width: 520px; margin: 0; color: rgba(255,255,255,0.82); font-size: clamp(1rem, 2.5vw, 1.2rem); }
+.raffle-kicker { color: var(--accent); font-size: 0.7rem; font-weight: 900; letter-spacing: 0.13em; text-transform: uppercase; }
+.raffle-hero .raffle-kicker { color: #f1bd78; }
+.raffle-price { display: flex; align-items: baseline; gap: 9px; margin: 28px 0 24px; }
+.raffle-price strong { font-size: 2.2rem; line-height: 1; }
+.raffle-price span { color: rgba(255,255,255,0.72); font-weight: 700; }
+.raffle-primary, .raffle-copy { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border: 0; background: var(--accent); color: #fff; font-weight: 800; }
+.raffle-primary:hover, .raffle-copy:hover { filter: brightness(1.08); }
+.raffle-section { margin-top: 14px; padding: 22px; background: var(--surface); }
+.raffle-section-heading h2, .raffle-payment h2 { margin: 4px 0 6px; color: var(--brand-strong); font-size: clamp(1.25rem, 3vw, 1.7rem); }
+.raffle-section-heading p, .raffle-payment p { margin: 0; color: var(--muted); font-size: 0.86rem; }
+.raffle-prizes { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 10px; margin-top: 18px; }
+.raffle-prize { min-height: 150px; padding: 15px; border: 1px solid var(--line); background: rgba(255,255,255,0.9); }
+.raffle-prize-number { color: var(--accent); font-size: 0.72rem; font-weight: 900; }
+.raffle-prize h3 { margin: 22px 0 5px; color: var(--ink-soft); font-size: 0.96rem; line-height: 1.2; }
+.raffle-prize p { margin: 0; color: var(--muted); font-size: 0.76rem; }
+.raffle-name-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 7px; margin-top: 18px; }
+.raffle-name { min-height: 42px; border: 1px solid var(--line-strong); background: #fff; color: var(--ink-soft); font-size: 0.78rem; font-weight: 700; }
+.raffle-name:hover { border-color: var(--brand); color: var(--brand); }
+.raffle-name.is-selected { border-color: var(--brand); background: var(--brand); color: #fff; box-shadow: 0 2px 8px var(--brand-glow); }
+.raffle-selection-summary { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; padding: 14px; background: var(--bg-alt); }
+.raffle-selection-summary span { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 700; }
+.raffle-selection-summary strong { display: block; margin-top: 3px; color: var(--brand-strong); font-size: 1.05rem; }
+.raffle-payment { display: grid; grid-template-columns: 1fr minmax(300px, 0.9fr); gap: 18px; align-items: center; margin-top: 14px; padding: 22px; background: var(--brand-strong); color: #fff; }
+.raffle-payment h2 { color: #fff; }
+.raffle-payment p { color: rgba(255,255,255,0.72); }
+.raffle-pix-box { display: flex; gap: 8px; align-items: stretch; padding: 8px; background: rgba(255,255,255,0.1); }
+.raffle-pix-box code { display: flex; align-items: center; min-width: 0; flex: 1; overflow-wrap: anywhere; color: #fff; font-size: 0.72rem; }
+.raffle-copy { flex-shrink: 0; min-height: 38px; font-size: 0.78rem; }
+.raffle-note { margin: 14px 2px 0; color: var(--muted); font-size: 0.72rem; }
+
+@media (max-width: 640px) {
+  .raffle-payment { grid-template-columns: 1fr; }
+  .raffle-pix-box { flex-direction: column; }
+  .raffle-copy { width: 100%; }
+}
+
 /* ─── Home: Image panel ──────────────────────────────────────── */
 .home-image-panel {
   margin: 24px 0 18px;

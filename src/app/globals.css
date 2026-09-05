@@ -201,11 +201,18 @@ button:disabled { cursor: default; }
     radial-gradient(circle at 88% 10%, rgba(26, 92, 71, 0.13), transparent 34%);
 }
 
-.raffle-shell { width: min(980px, calc(100% - 24px)); margin: 0 auto; }
-.raffle-back { display: inline-block; margin-bottom: 14px; color: var(--brand); font-size: 0.82rem; font-weight: 800; }
+.raffle-shell { width: min(1040px, calc(100% - 24px)); margin: 0 auto; }
 .raffle-hero, .raffle-section, .raffle-payment { border: 1px solid var(--line); box-shadow: var(--shadow-md); }
-.raffle-hero { padding: clamp(24px, 6vw, 58px); background: linear-gradient(135deg, var(--brand-strong), var(--brand)); color: #fff; }
-.raffle-hero h1 { margin: 5px 0 8px; font-size: clamp(2.4rem, 8vw, 5.4rem); line-height: 0.96; letter-spacing: -0.06em; }
+.raffle-hero { position: relative; overflow: hidden; padding: clamp(22px, 5vw, 48px); background: linear-gradient(135deg, #071b35 0%, #0d3760 56%, #115d86 100%); color: #fff; }
+.raffle-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.13; background: repeating-linear-gradient(135deg, transparent 0 26px, rgba(255,255,255,0.18) 27px 28px); }
+.raffle-brand-row, .raffle-hero > p, .raffle-hero > .raffle-price, .raffle-hero > .raffle-primary { position: relative; z-index: 1; }
+.raffle-brand-row { display: grid; grid-template-columns: 112px 1fr 112px; gap: 18px; align-items: center; }
+.raffle-crest { width: 100%; height: 112px; object-fit: contain; filter: drop-shadow(0 5px 8px rgba(0,0,0,0.25)); }
+.raffle-crest-pmpr { object-fit: contain; }
+.raffle-crest-bpm { background: rgba(255,255,255,0.96); padding: 5px; }
+.raffle-hero-copy { text-align: center; }
+.raffle-hero h1 { margin: 6px 0 8px; font-size: clamp(2.4rem, 8vw, 5.4rem); line-height: 0.9; letter-spacing: -0.07em; text-transform: uppercase; }
+.raffle-hero h1 em { color: #f4b942; font-style: normal; }
 .raffle-hero p { max-width: 520px; margin: 0; color: rgba(255,255,255,0.82); font-size: clamp(1rem, 2.5vw, 1.2rem); }
 .raffle-kicker { color: var(--accent); font-size: 0.7rem; font-weight: 900; letter-spacing: 0.13em; text-transform: uppercase; }
 .raffle-hero .raffle-kicker { color: #f1bd78; }
@@ -214,13 +221,22 @@ button:disabled { cursor: default; }
 .raffle-price span { color: rgba(255,255,255,0.72); font-weight: 700; }
 .raffle-primary, .raffle-copy { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border: 0; background: var(--accent); color: #fff; font-weight: 800; }
 .raffle-primary:hover, .raffle-copy:hover { filter: brightness(1.08); }
+.raffle-photo-band { position: relative; height: 172px; overflow: hidden; margin-top: 14px; border: 1px solid var(--line); box-shadow: var(--shadow-md); }
+.raffle-photo-band img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 62%; filter: saturate(0.9) contrast(1.05); }
+.raffle-photo-band::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(7,27,53,0.82), rgba(7,27,53,0.05) 75%); }
+.raffle-photo-band div { position: absolute; z-index: 1; left: 24px; top: 50%; transform: translateY(-50%); display: grid; gap: 3px; color: #fff; }
+.raffle-photo-band strong { font-size: clamp(1rem, 3vw, 1.5rem); }
+.raffle-photo-band span { color: #f4b942; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
 .raffle-section { margin-top: 14px; padding: 22px; background: var(--surface); }
 .raffle-section-heading h2, .raffle-payment h2 { margin: 4px 0 6px; color: var(--brand-strong); font-size: clamp(1.25rem, 3vw, 1.7rem); }
 .raffle-section-heading p, .raffle-payment p { margin: 0; color: var(--muted); font-size: 0.86rem; }
 .raffle-prizes { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 10px; margin-top: 18px; }
-.raffle-prize { min-height: 150px; padding: 15px; border: 1px solid var(--line); background: rgba(255,255,255,0.9); }
+.raffle-prize { min-height: 184px; padding: 15px; border: 1px solid rgba(22,79,59,0.13); border-top: 4px solid var(--accent); background: linear-gradient(160deg, #fff, #f1f6f3); box-shadow: var(--shadow-sm); transition: transform 0.18s ease, box-shadow 0.18s ease; }
+.raffle-prize:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.raffle-prize-top { display: flex; align-items: start; justify-content: space-between; gap: 8px; }
 .raffle-prize-number { color: var(--accent); font-size: 0.72rem; font-weight: 900; }
-.raffle-prize h3 { margin: 22px 0 5px; color: var(--ink-soft); font-size: 0.96rem; line-height: 1.2; }
+.raffle-prize-icon { display: grid; place-items: center; width: 52px; height: 52px; background: var(--accent-light); font-size: 1.8rem; }
+.raffle-prize h3 { margin: 18px 0 5px; color: var(--ink-soft); font-size: 0.96rem; line-height: 1.2; }
 .raffle-prize p { margin: 0; color: var(--muted); font-size: 0.76rem; }
 .raffle-name-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 7px; margin-top: 18px; }
 .raffle-name { min-height: 42px; border: 1px solid var(--line-strong); background: #fff; color: var(--ink-soft); font-size: 0.78rem; font-weight: 700; }
@@ -229,17 +245,24 @@ button:disabled { cursor: default; }
 .raffle-selection-summary { display: flex; justify-content: space-between; gap: 12px; margin-top: 16px; padding: 14px; background: var(--bg-alt); }
 .raffle-selection-summary span { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 700; }
 .raffle-selection-summary strong { display: block; margin-top: 3px; color: var(--brand-strong); font-size: 1.05rem; }
-.raffle-payment { display: grid; grid-template-columns: 1fr minmax(300px, 0.9fr); gap: 18px; align-items: center; margin-top: 14px; padding: 22px; background: var(--brand-strong); color: #fff; }
+.raffle-payment { display: grid; grid-template-columns: 1fr minmax(390px, 0.9fr); gap: 18px; align-items: center; margin-top: 14px; padding: 22px; background: linear-gradient(135deg, #071b35, #0f3d62); color: #fff; }
 .raffle-payment h2 { color: #fff; }
 .raffle-payment p { color: rgba(255,255,255,0.72); }
-.raffle-pix-box { display: flex; gap: 8px; align-items: stretch; padding: 8px; background: rgba(255,255,255,0.1); }
-.raffle-pix-box code { display: flex; align-items: center; min-width: 0; flex: 1; overflow-wrap: anywhere; color: #fff; font-size: 0.72rem; }
+.raffle-pix-box { display: flex; gap: 14px; align-items: center; padding: 10px; background: rgba(255,255,255,0.1); }
+.raffle-qr { width: 124px; height: 124px; padding: 5px; flex-shrink: 0; background: #fff; }
+.raffle-pix-details { display: grid; gap: 8px; min-width: 0; }
+.raffle-pix-details > span { color: #f4b942; font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+.raffle-pix-box code { display: block; min-width: 0; overflow-wrap: anywhere; color: #fff; font-size: 0.72rem; }
 .raffle-copy { flex-shrink: 0; min-height: 38px; font-size: 0.78rem; }
 .raffle-note { margin: 14px 2px 0; color: var(--muted); font-size: 0.72rem; }
 
 @media (max-width: 640px) {
+  .raffle-brand-row { grid-template-columns: 58px 1fr 58px; gap: 8px; }
+  .raffle-crest { height: 64px; }
+  .raffle-hero h1 { font-size: clamp(2.25rem, 13vw, 3.8rem); }
+  .raffle-photo-band { height: 142px; }
   .raffle-payment { grid-template-columns: 1fr; }
-  .raffle-pix-box { flex-direction: column; }
+  .raffle-pix-box { align-items: flex-start; }
   .raffle-copy { width: 100%; }
 }
 

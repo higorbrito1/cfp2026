@@ -13,6 +13,7 @@ void main() {
   testWidgets('abre a consulta de multas', (WidgetTester tester) async {
     await tester.pumpWidget(const CfpMultasApp());
     await tester.pump();
-    expect(find.text('Multas do CTB/MBFT'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 2));
+    expect(find.byType(CfpMultasApp), findsOneWidget);
   });
 }

@@ -396,17 +396,12 @@ export default function InicioPage() {
           </div>
 
           <div className="home-actions">
-            <button
-              type="button"
+            <Link
+              href="/multas"
               className="secondary-button fine-consult-button"
-              onClick={() => {
-                setFineQuery("");
-                setSelectedFine(null);
-                setIsFineModalOpen(true);
-              }}
             >
               Consultar multas
-            </button>
+            </Link>
             <button
               type="button"
               className="secondary-button"

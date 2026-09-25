@@ -199,6 +199,29 @@ button:disabled { cursor: default; }
   box-shadow: 0 3px 12px rgba(192, 122, 48, 0.26);
 }
 
+.fines-page { min-height: 100vh; }
+.fines-hero { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; }
+.fines-hero h1 { margin: 0; color: var(--ink); font-size: clamp(1.65rem, 5vw, 2.35rem); line-height: 1.05; }
+.fine-back-link { display: inline-block; margin-bottom: 18px; color: var(--brand); font-size: 0.78rem; font-weight: 800; text-decoration: none; }
+.fine-back-link:hover { text-decoration: underline; }
+.fines-intro { max-width: 650px; margin: 10px 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+.fines-total { display: grid; gap: 3px; min-width: 130px; padding: 14px; border: 1px solid var(--line); background: rgba(26, 92, 71, 0.06); text-align: center; }
+.fines-total strong { color: var(--brand-strong); font-size: 1.8rem; line-height: 1; }
+.fines-total span { color: var(--muted); font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+.fines-panel { display: grid; gap: 10px; }
+.fines-search-field { min-height: 56px; }
+.fines-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.fines-toolbar .fine-result-count { margin: 8px 0; }
+.fines-hint { color: var(--muted); font-size: 0.72rem; }
+.fines-page-results { max-height: none; }
+.fine-detail-modal { width: min(760px, 100%); }
+
+@media (max-width: 640px) {
+  .fines-hero { display: grid; align-items: stretch; }
+  .fines-total { justify-self: start; }
+  .fines-toolbar { display: grid; gap: 0; }
+}
+
 /* ─── Home: Image panel ──────────────────────────────────────── */
 .home-image-panel {
   margin: 24px 0 18px;

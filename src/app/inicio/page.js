@@ -725,60 +725,62 @@ export default function InicioPage() {
               {filteredFines.length} {filteredFines.length === 1 ? "resultado encontrado" : "resultados encontrados"}
             </p>
 
-            {selectedFine ? (
-              <section className="fine-detail" aria-live="polite">
-                <button type="button" className="fine-back-button" onClick={() => setSelectedFine(null)}>← Voltar aos resultados</button>
-                <div className="fine-detail-heading">
-                  <div>
-                    <span className="fine-article">Enquadramento {selectedFine.id} · {selectedFine.article}</span>
-                    <h3>{selectedFine.title}</h3>
-                    <p>{selectedFine.summary}</p>
-                  </div>
-                  <span className={`fine-severity severity-${normalizeSearch(selectedFine.severity)}`}>{selectedFine.severity}</span>
-                </div>
-                <div className="fine-detail-grid">
-                  {[
-                    ["Gravidade", selectedFine.severity], ["Pontuação", selectedFine.points],
-                    ["Penalidade", selectedFine.penalty], ["Medida administrativa", selectedFine.measure],
-                    ["Infrator", selectedFine.offender], ["Constatação", selectedFine.detection],
-                    ["Crime de trânsito", selectedFine.crime], ["Competência", selectedFine.competence]
-                  ].map(([label, value]) => (
-                    <div className="fine-detail-field" key={label}><span>{label}</span><strong>{value || "Não informado na ficha"}</strong></div>
-                  ))}
-                </div>
-                {[
-                  ["Quando autuar", selectedFine.whenToAutuate],
-                  ["Quando não autuar", selectedFine.whenNotToAutuate],
-                  ["Definições e procedimentos", selectedFine.procedures],
-                  ["Exemplos para observações do AIT", selectedFine.examples],
-                  ["Informações complementares", selectedFine.additional]
-                ].filter(([, value]) => value).map(([label, value]) => (
-                  <details className="fine-detail-section" key={label} open={label === "Quando autuar"}>
-                    <summary>{label}</summary>
-                    <p>{value}</p>
-                  </details>
-                ))}
-              </section>
-            ) : (
-              <div className="fine-results" aria-live="polite">
-                {filteredFines.length > 0 ? filteredFines.map((fine) => (
-                  <button type="button" className="fine-card" key={fine.id} onClick={() => setSelectedFine(fine)}>
+            <div className="fine-results" aria-live="polite">
+              {filteredFines.length > 0 ? filteredFines.map((fine) => (
+                <div className="fine-result-item" key={fine.id}>
+                  <button
+                    type="button"
+                    className={`fine-card ${selectedFine?.id === fine.id ? "is-expanded" : ""}`}
+                    onClick={() => setSelectedFine((current) => current?.id === fine.id ? null : fine)}
+                    aria-expanded={selectedFine?.id === fine.id}
+                  >
                     <div className="fine-card-topline">
                       <span className="fine-article">{fine.id} · {fine.article}</span>
                       <span className={`fine-severity severity-${normalizeSearch(fine.severity)}`}>{fine.severity}</span>
                     </div>
                     <h3>{fine.title}</h3>
                     <div className="fine-card-summary"><span>{fine.penalty || "Penalidade não informada"}</span><span>{fine.points || "Pontuação não informada"}</span></div>
-                    <small className="fine-card-open">Clique para ver a ficha completa →</small>
+                    <small className="fine-card-open">{selectedFine?.id === fine.id ? "Clique para recolher a ficha ↑" : "Clique para abrir a ficha completa →"}</small>
                   </button>
-                )) : (
-                  <div className="fine-empty-state">
-                    <strong>Nenhuma infração encontrada</strong>
-                    <span>Tente buscar pelo número do artigo, código, tipificação, penalidade ou outra palavra.</span>
-                  </div>
-                )}
-              </div>
-            )}
+                  {selectedFine?.id === fine.id && (
+                    <section className="fine-detail" aria-live="polite">
+                      <div className="fine-detail-heading">
+                        <div>
+                          <span className="fine-article">Enquadramento {fine.id} · {fine.article}</span>
+                          <h3>{fine.title}</h3>
+                          <p>{fine.summary}</p>
+                        </div>
+                        <span className={`fine-severity severity-${normalizeSearch(fine.severity)}`}>{fine.severity}</span>
+                      </div>
+                      <div className="fine-detail-grid">
+                        {[
+                          ["Gravidade", fine.severity], ["Pontuação", fine.points], ["Penalidade", fine.penalty],
+                          ["Medida administrativa", fine.measure], ["Infrator", fine.offender], ["Constatação", fine.detection],
+                          ["Crime de trânsito", fine.crime], ["Competência", fine.competence]
+                        ].map(([label, value]) => (
+                          <div className="fine-detail-field" key={label}><span>{label}</span><strong>{value || "Não informado na ficha"}</strong></div>
+                        ))}
+                      </div>
+                      {[
+                        ["Quando autuar", fine.whenToAutuate], ["Quando não autuar", fine.whenNotToAutuate],
+                        ["Definições e procedimentos", fine.procedures], ["Exemplos para observações do AIT", fine.examples],
+                        ["Informações complementares", fine.additional]
+                      ].filter(([, value]) => value).map(([label, value]) => (
+                        <details className="fine-detail-section" key={label} open={label === "Quando autuar"}>
+                          <summary>{label}</summary>
+                          <p>{value}</p>
+                        </details>
+                      ))}
+                    </section>
+                  )}
+                </div>
+              )) : (
+                <div className="fine-empty-state">
+                  <strong>Nenhuma infração encontrada</strong>
+                  <span>Tente buscar pelo número do artigo, código, tipificação, penalidade ou outra palavra.</span>
+                </div>
+              )}
+            </div>
 
             <div className="fine-source-note">
               <span>402 fichas do MBFT · base consultada em {CTB_UPDATED_AT}</span>

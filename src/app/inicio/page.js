@@ -25,8 +25,8 @@ import {
 import {
   CTB_FINE_RECORDS,
   CTB_OFFICIAL_URL,
+  CTB_LEI_URL,
   CTB_UPDATED_AT,
-  formatFineAmount,
   normalizeSearch
 } from "../../lib/ctb";
 
@@ -166,6 +166,7 @@ export default function InicioPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFineModalOpen, setIsFineModalOpen] = useState(false);
   const [fineQuery, setFineQuery] = useState("");
+  const [selectedFine, setSelectedFine] = useState(null);
   const [selectedDate, setSelectedDate] = useState(() => formatYmd(now));
   const [visibleMonth, setVisibleMonth] = useState(() => formatYmd(now).slice(0, 7));
   const [weather, setWeather] = useState({
@@ -239,11 +240,12 @@ export default function InicioPage() {
   );
 
   const filteredFines = useMemo(() => {
-    const query = normalizeSearch(fineQuery);
-    if (!query) return CTB_FINE_RECORDS;
-    return CTB_FINE_RECORDS.filter((fine) => normalizeSearch(
-      `${fine.article} ${fine.title} ${fine.severity} ${fine.amount} ${fine.points}`
-    ).includes(query));
+    const tokens = normalizeSearch(fineQuery).split(" ").filter(Boolean);
+    if (!tokens.length) return CTB_FINE_RECORDS;
+    return CTB_FINE_RECORDS.filter((fine) => {
+      const searchableText = normalizeSearch(Object.values(fine).join(" "));
+      return tokens.every((token) => searchableText.includes(token));
+    });
   }, [fineQuery]);
 
   useEffect(() => {
@@ -397,7 +399,11 @@ export default function InicioPage() {
             <button
               type="button"
               className="secondary-button fine-consult-button"
-              onClick={() => setIsFineModalOpen(true)}
+              onClick={() => {
+                setFineQuery("");
+                setSelectedFine(null);
+                setIsFineModalOpen(true);
+              }}
             >
               Consultar multas
             </button>
@@ -719,31 +725,64 @@ export default function InicioPage() {
               {filteredFines.length} {filteredFines.length === 1 ? "resultado encontrado" : "resultados encontrados"}
             </p>
 
-            <div className="fine-results" aria-live="polite">
-              {filteredFines.length > 0 ? filteredFines.map((fine) => (
-                <article className="fine-card" key={fine.article}>
-                  <div className="fine-card-topline">
-                    <span className="fine-article">{fine.article}</span>
-                    <span className={`fine-severity severity-${normalizeSearch(fine.severity)}`}>{fine.severity}</span>
+            {selectedFine ? (
+              <section className="fine-detail" aria-live="polite">
+                <button type="button" className="fine-back-button" onClick={() => setSelectedFine(null)}>← Voltar aos resultados</button>
+                <div className="fine-detail-heading">
+                  <div>
+                    <span className="fine-article">Enquadramento {selectedFine.id} · {selectedFine.article}</span>
+                    <h3>{selectedFine.title}</h3>
+                    <p>{selectedFine.summary}</p>
                   </div>
-                  <h3>{fine.title}</h3>
-                  <div className="fine-data-grid">
-                    <div><span>Valor</span><strong>{formatFineAmount(fine.amount)}</strong></div>
-                    <div><span>Pontos</span><strong>{fine.points}</strong></div>
-                    <div><span>Consequência</span><strong>{fine.consequence}</strong></div>
-                  </div>
-                </article>
-              )) : (
-                <div className="fine-empty-state">
-                  <strong>Nenhuma infração encontrada</strong>
-                  <span>Tente buscar pelo número do artigo ou por outra palavra.</span>
+                  <span className={`fine-severity severity-${normalizeSearch(selectedFine.severity)}`}>{selectedFine.severity}</span>
                 </div>
-              )}
-            </div>
+                <div className="fine-detail-grid">
+                  {[
+                    ["Gravidade", selectedFine.severity], ["Pontuação", selectedFine.points],
+                    ["Penalidade", selectedFine.penalty], ["Medida administrativa", selectedFine.measure],
+                    ["Infrator", selectedFine.offender], ["Constatação", selectedFine.detection],
+                    ["Crime de trânsito", selectedFine.crime], ["Competência", selectedFine.competence]
+                  ].map(([label, value]) => (
+                    <div className="fine-detail-field" key={label}><span>{label}</span><strong>{value || "Não informado na ficha"}</strong></div>
+                  ))}
+                </div>
+                {[
+                  ["Quando autuar", selectedFine.whenToAutuate],
+                  ["Quando não autuar", selectedFine.whenNotToAutuate],
+                  ["Definições e procedimentos", selectedFine.procedures],
+                  ["Exemplos para observações do AIT", selectedFine.examples],
+                  ["Informações complementares", selectedFine.additional]
+                ].filter(([, value]) => value).map(([label, value]) => (
+                  <details className="fine-detail-section" key={label} open={label === "Quando autuar"}>
+                    <summary>{label}</summary>
+                    <p>{value}</p>
+                  </details>
+                ))}
+              </section>
+            ) : (
+              <div className="fine-results" aria-live="polite">
+                {filteredFines.length > 0 ? filteredFines.map((fine) => (
+                  <button type="button" className="fine-card" key={fine.id} onClick={() => setSelectedFine(fine)}>
+                    <div className="fine-card-topline">
+                      <span className="fine-article">{fine.id} · {fine.article}</span>
+                      <span className={`fine-severity severity-${normalizeSearch(fine.severity)}`}>{fine.severity}</span>
+                    </div>
+                    <h3>{fine.title}</h3>
+                    <div className="fine-card-summary"><span>{fine.penalty || "Penalidade não informada"}</span><span>{fine.points || "Pontuação não informada"}</span></div>
+                    <small className="fine-card-open">Clique para ver a ficha completa →</small>
+                  </button>
+                )) : (
+                  <div className="fine-empty-state">
+                    <strong>Nenhuma infração encontrada</strong>
+                    <span>Tente buscar pelo número do artigo, código, tipificação, penalidade ou outra palavra.</span>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="fine-source-note">
-              <span>Base resumida · atualizada em {CTB_UPDATED_AT}</span>
-              <a href={CTB_OFFICIAL_URL} target="_blank" rel="noreferrer">Ver CTB atualizado no Planalto ↗</a>
+              <span>402 fichas do MBFT · base consultada em {CTB_UPDATED_AT}</span>
+              <span className="fine-source-links"><a href={CTB_OFFICIAL_URL} target="_blank" rel="noreferrer">Resoluções CONTRAN ↗</a><a href={CTB_LEI_URL} target="_blank" rel="noreferrer">CTB no Planalto ↗</a></span>
             </div>
           </div>
         </div>

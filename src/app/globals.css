@@ -192,6 +192,13 @@ button:disabled { cursor: default; }
   box-shadow: 0 6px 18px var(--brand-glow);
 }
 
+.fine-consult-button {
+  background: linear-gradient(135deg, var(--accent), #a45d1f) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow: 0 3px 12px rgba(192, 122, 48, 0.26);
+}
+
 /* ─── Home: Image panel ──────────────────────────────────────── */
 .home-image-panel {
   margin: 24px 0 18px;
@@ -869,6 +876,50 @@ button:disabled { cursor: default; }
 }
 
 .modal-date-heading h3 { margin: 0; font-size: 1.2rem; }
+
+.fine-modal-content {
+  width: min(680px, 100%);
+}
+
+.fine-modal-heading { margin-bottom: 18px; padding-right: 24px; }
+.fine-modal-heading h2 { margin: 0; color: var(--ink); font-size: 1.45rem; }
+.fine-modal-heading p:not(.card-label) { margin: 6px 0 0; color: var(--muted); font-size: 0.82rem; line-height: 1.45; }
+
+.fine-search-field {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 50px;
+  border: 2px solid var(--brand);
+  padding: 0 12px;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(26, 92, 71, 0.08);
+}
+
+.fine-search-field > span:not(.sr-only) { color: var(--brand); font-size: 1.5rem; line-height: 1; }
+.fine-search-field input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; font-size: 0.95rem; }
+.fine-search-field input::-webkit-search-cancel-button { display: none; }
+.fine-search-field button { border: 0; background: transparent; color: var(--muted); font-size: 1.35rem; cursor: pointer; }
+.fine-result-count { margin: 16px 0 9px; color: var(--muted); font-size: 0.76rem; font-weight: 700; }
+.fine-results { display: grid; gap: 9px; max-height: 48vh; overflow-y: auto; padding: 2px 3px 2px 0; }
+.fine-card { border: 1px solid var(--line); padding: 13px; background: rgba(255,255,255,0.9); }
+.fine-card-topline { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.fine-article { color: var(--brand); font-size: 0.75rem; font-weight: 800; }
+.fine-severity { padding: 3px 7px; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
+.severity-gravissima { background: rgba(191, 33, 33, 0.1); color: var(--danger); }
+.severity-grave { background: rgba(192, 122, 48, 0.14); color: #985b20; }
+.severity-media { background: rgba(26, 92, 71, 0.1); color: var(--brand); }
+.fine-card h3 { margin: 9px 0 12px; font-size: 0.91rem; line-height: 1.35; }
+.fine-data-grid { display: grid; grid-template-columns: 1fr 0.55fr 1.8fr; gap: 8px; }
+.fine-data-grid div { display: grid; gap: 3px; padding: 8px; background: rgba(26, 92, 71, 0.055); }
+.fine-data-grid span { color: var(--muted); font-size: 0.63rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+.fine-data-grid strong { color: var(--ink-soft); font-size: 0.77rem; line-height: 1.3; }
+.fine-empty-state { display: grid; gap: 5px; padding: 30px 16px; border: 1px dashed var(--line-strong); text-align: center; }
+.fine-empty-state strong { font-size: 0.92rem; }
+.fine-empty-state span { color: var(--muted); font-size: 0.8rem; }
+.fine-source-note { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.68rem; line-height: 1.4; }
+.fine-source-note a { color: var(--brand); font-weight: 800; text-decoration: none; }
+.fine-source-note a:hover { text-decoration: underline; }
 .roster-details { margin-bottom: 16px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .roster-details summary { padding: 10px 0; color: var(--brand); cursor: pointer; font-size: 0.82rem; font-weight: 800; }
 .roster-details .team-list { padding-bottom: 8px; }
@@ -933,6 +984,9 @@ button:disabled { cursor: default; }
   body { overflow-x: hidden; }
   .modal-backdrop { align-items: flex-start; padding: 8px; }
   .modal-content { width: 100%; max-height: 96vh; padding: 16px; }
+  .fine-data-grid { grid-template-columns: 1fr 1fr; }
+  .fine-data-grid div:last-child { grid-column: 1 / -1; }
+  .fine-source-note { flex-direction: column; }
   .modal-date-heading { flex-direction: column; gap: 8px; }
   .modal-date-heading .selected-note { width: 100%; }
   .guard-time-fields { grid-template-columns: 1fr; }

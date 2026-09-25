@@ -22,6 +22,13 @@ import {
   REFERENCE_DATE,
   REFERENCE_GROUP
 } from "../../lib/scale";
+import {
+  CTB_FINE_RECORDS,
+  CTB_OFFICIAL_URL,
+  CTB_UPDATED_AT,
+  formatFineAmount,
+  normalizeSearch
+} from "../../lib/ctb";
 
 const PARANAVAI = {
   label: "Paranavai, PR",
@@ -157,6 +164,8 @@ export default function InicioPage() {
   const [now, setNow] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFineModalOpen, setIsFineModalOpen] = useState(false);
+  const [fineQuery, setFineQuery] = useState("");
   const [selectedDate, setSelectedDate] = useState(() => formatYmd(now));
   const [visibleMonth, setVisibleMonth] = useState(() => formatYmd(now).slice(0, 7));
   const [weather, setWeather] = useState({
@@ -228,6 +237,25 @@ export default function InicioPage() {
     () => countRemainingGuardsForGroup(selected, referenceDate, REFERENCE_GROUP),
     [referenceDate, selected]
   );
+
+  const filteredFines = useMemo(() => {
+    const query = normalizeSearch(fineQuery);
+    if (!query) return CTB_FINE_RECORDS;
+    return CTB_FINE_RECORDS.filter((fine) => normalizeSearch(
+      `${fine.article} ${fine.title} ${fine.severity} ${fine.amount} ${fine.points}`
+    ).includes(query));
+  }, [fineQuery]);
+
+  useEffect(() => {
+    function handleEscape(event) {
+      if (event.key === "Escape") {
+        setIsModalOpen(false);
+        setIsFineModalOpen(false);
+      }
+    }
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, []);
 
   const monthTitle = new Intl.DateTimeFormat("pt-BR", {
     month: "long",
@@ -366,6 +394,13 @@ export default function InicioPage() {
           </div>
 
           <div className="home-actions">
+            <button
+              type="button"
+              className="secondary-button fine-consult-button"
+              onClick={() => setIsFineModalOpen(true)}
+            >
+              Consultar multas
+            </button>
             <button
               type="button"
               className="secondary-button"
@@ -650,6 +685,66 @@ export default function InicioPage() {
               )}
               </section>
             </details>
+          </div>
+        </div>
+      )}
+
+      {isFineModalOpen && (
+        <div className="modal-backdrop" onClick={() => setIsFineModalOpen(false)}>
+          <div className="modal-content fine-modal-content" onClick={(event) => event.stopPropagation()}>
+            <button type="button" className="modal-close" onClick={() => setIsFineModalOpen(false)} aria-label="Fechar consulta de multas">
+              &times;
+            </button>
+
+            <div className="fine-modal-heading">
+              <p className="card-label">Consulta rápida</p>
+              <h2>Multas do CTB</h2>
+              <p>Digite o artigo, uma palavra da infração ou a gravidade para encontrar o resultado.</p>
+            </div>
+
+            <label className="fine-search-field">
+              <span className="sr-only">Pesquisar infração</span>
+              <span aria-hidden="true">⌕</span>
+              <input
+                autoFocus
+                type="search"
+                value={fineQuery}
+                onChange={(event) => setFineQuery(event.target.value)}
+                placeholder="Ex.: celular, art. 208 ou gravíssima"
+              />
+              {fineQuery && <button type="button" onClick={() => setFineQuery("")} aria-label="Limpar busca">×</button>}
+            </label>
+
+            <p className="fine-result-count" aria-live="polite">
+              {filteredFines.length} {filteredFines.length === 1 ? "resultado encontrado" : "resultados encontrados"}
+            </p>
+
+            <div className="fine-results" aria-live="polite">
+              {filteredFines.length > 0 ? filteredFines.map((fine) => (
+                <article className="fine-card" key={fine.article}>
+                  <div className="fine-card-topline">
+                    <span className="fine-article">{fine.article}</span>
+                    <span className={`fine-severity severity-${normalizeSearch(fine.severity)}`}>{fine.severity}</span>
+                  </div>
+                  <h3>{fine.title}</h3>
+                  <div className="fine-data-grid">
+                    <div><span>Valor</span><strong>{formatFineAmount(fine.amount)}</strong></div>
+                    <div><span>Pontos</span><strong>{fine.points}</strong></div>
+                    <div><span>Consequência</span><strong>{fine.consequence}</strong></div>
+                  </div>
+                </article>
+              )) : (
+                <div className="fine-empty-state">
+                  <strong>Nenhuma infração encontrada</strong>
+                  <span>Tente buscar pelo número do artigo ou por outra palavra.</span>
+                </div>
+              )}
+            </div>
+
+            <div className="fine-source-note">
+              <span>Base resumida · atualizada em {CTB_UPDATED_AT}</span>
+              <a href={CTB_OFFICIAL_URL} target="_blank" rel="noreferrer">Ver CTB atualizado no Planalto ↗</a>
+            </div>
           </div>
         </div>
       )}

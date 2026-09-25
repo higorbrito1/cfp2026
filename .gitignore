@@ -8,3 +8,10 @@ npm-debug.log*
 
 .vercel
 .site
+
+# Flutter generated files
+flutter_app/.dart_tool
+flutter_app/build
+flutter_app/android/.gradle
+flutter_app/android/local.properties
+flutter_app/ios/Pods
